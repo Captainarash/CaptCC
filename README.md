@@ -13,11 +13,11 @@ I want to convert C to ASM like a normal compiler does.
 The project is still in its baby steps so please don't expect it to compile everything.   
 Below is the stage of the compiler which tell what the compiler can compile now:   
 
-source:   
+###### Source:   
+
 int main(){int a = 123; return 1;}
 
-output:
-
+###### Output:
 
 .section __TEXT   
 	.globl _main   
@@ -29,7 +29,7 @@ _main:
    
    
 
-USAGE:   
+###### USAGE:   
    
-codeGenerator(transformer(parser(tokenizer("int main(){int a = 2;return 1;}"))))
-console.log(output);
+        codeGenerator(transformer(parser(tokenizer("int main(){int a = 2;return 1;}"))))    
+        console.log(output)    
