@@ -14,10 +14,10 @@ The project is still in its baby steps so please don't expect it to compile ever
 Below is the stage of the compiler which tell what the compiler can compile now:   
 
 source:   
-
 int main(){int a = 123; return 1;}
 
 output:
+
 
 .section __TEXT   
 	.globl _main   
