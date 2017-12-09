@@ -15,17 +15,17 @@ Below is the stage of the compiler which tell what the compiler can compile now:
 
 ###### Source:   
 
-int main(){int a = 123; return 1;}
+    int main(){int a = 123; return 1;}
 
 ###### Output:
 
-.section __TEXT   
-	.globl _main   
-_main:   
-	mov	$123,%eax   
-	push	%eax   
-	mov	$1,%eax   
-	ret   
+    .section __TEXT   
+    	.globl _main   
+    _main:   
+    	mov	$123,%eax   
+    	push	%eax   
+    	mov	$1,%eax   
+    	ret   
    
    
 
