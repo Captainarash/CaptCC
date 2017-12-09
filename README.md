@@ -13,9 +13,12 @@ I want to convert C to ASM like a normal compiler does.
 The project is still in its baby steps so please don't expect it to compile everything.
 Below is the stage of the compiler which tell what the compiler can compile now:
 
-----------------------------------
+source:
+
 int main(){int a = 123; return 1;}
-----------------------------------
+
+output:
+
 .section __TEXT
 	.globl _main
 _main:
@@ -23,7 +26,7 @@ _main:
 	push	%eax
 	mov	$1,%eax
 	ret
-----------------------------------
+
 
 USAGE:
 codeGenerator(transformer(parser(tokenizer("int main(){int a = 2;return 1;}"))))
