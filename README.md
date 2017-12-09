@@ -29,5 +29,6 @@ _main:
 
 
 USAGE:
+
 codeGenerator(transformer(parser(tokenizer("int main(){int a = 2;return 1;}"))))
 console.log(output);
