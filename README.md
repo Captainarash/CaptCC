@@ -2,7 +2,7 @@
 A tiny C compiler written purely in JavaScript.   
 It's been a while that I learned JS and it has worked for me in many different scenarios.    
 I actually learned JS while analyzing a piece of malware written in JS. Then I got really interested.   
-I was always curious if I can write a compiler; a tiny one. But there was a problem. I didn't knew OCaml or Bison or Flex.   
+I was always curious if I can write a compiler; a tiny one. But there was a problem. I didn't know OCaml or Bison or Flex.   
 I wondered why not just write it in JS?   
 
 
