@@ -28,7 +28,7 @@ Below is the stage of the compiler which tell what the compiler can compile now:
     	push	%eax
 	        add $4,%esp
     	pop %ebp
-        mov	$1,%eax
+            mov	$1,%eax
 	        ret   
    
    
