@@ -20,16 +20,16 @@ Below is the stage of the compiler which tell what the compiler can compile now:
 ###### Output:
 
     .section __TEXT
-	    .globl _main
+    .globl _main
     _main:
-	    push %ebp
-    	mov %esp,%ebp
-    	mov $123,%eax
-    	push %eax
-	        add $4,%esp
-    	pop %ebp
-            mov	$1,%eax
-	        ret   
+    push %ebp
+    mov %esp,%ebp
+    mov $123,%eax
+    push %eax
+    add $4,%esp
+    pop %ebp
+    mov $1,%eax
+    ret   
    
    
 
