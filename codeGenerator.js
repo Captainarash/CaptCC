@@ -1,3 +1,4 @@
+var stackuse = 0;
 var output = "";
 function codeGenerator(node, parent) {
   parent = parent || node;
@@ -15,17 +16,20 @@ function codeGenerator(node, parent) {
     var tick = 0;
     if (parent.type === 'Program') {
       if (node.value === 'int' && parent.body[1].value === 'main') {
-        output += "\t.globl _main\n_main:\n"
+        output += "\t.globl _main\n_main:\n\tpush %ebp\n\tmov %esp,%ebp\n";
+        stackuse++;
       }
     }
 
     if (node.value === 'int' && parent.type === 'CodeDomain') {
       if (parent.arguments[current+1].type === 'Word') {
-        output += "\tmov\t$" + parent.arguments[current+3].value + ",%eax\n\tpush\t%eax\n"
+        output += "\tmov\t$" + parent.arguments[current+3].value + ",%eax\n\tpush\t%eax\n";
+        stackuse++;
       }
     }
     if (node.value === 'return' && parent.type === 'CodeDomain') {
       if (parent.arguments[parent.arguments.length-1].type === 'NumberLiteral') {
+        output += '\tadd $' + (stackuse - 1) * 4 + ",%esp\n\tpop %ebp\n";
         output += "\tmov\t$" + parent.arguments[parent.arguments.length-1].value + ",%eax\n\tret\n";
       }
     }
