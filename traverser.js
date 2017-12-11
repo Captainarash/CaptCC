@@ -117,7 +117,7 @@ function transformer(ast) {
         if (parent.type !== 'CodeCave') {
 
           expression = {
-            type: 'ExpressionStatement',
+            type: 'Function',
             expression: expression
           };
         }
@@ -137,7 +137,7 @@ function transformer(ast) {
 
         if (parent.type !== 'CodeDomain') {
           expression = {
-            type: 'ExpressionStatement',
+            type: 'Function',
             expression: expression
           };
         }
