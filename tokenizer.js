@@ -71,6 +71,12 @@ function tokenizer(input) {
       continue;
     }
 
+    var NEWLINE = /\n/;
+    if(NEWLINE.test(char)) {
+      current++;
+      continue;
+    }
+
     var NUMBERS = /[0-9]/;
     if(NUMBERS.test(char)) {
       var value = '';
