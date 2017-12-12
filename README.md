@@ -15,25 +15,32 @@ Below is the stage of the compiler which tell what the compiler can compile now:
 
 ###### Source:   
 
-    int main(){int a = 123; return 1;}
+    int test(){return 0;}int main(){int a = 45; return 1;}
 
 ###### Output:
 
     .section __TEXT
-    .globl _main
+        .globl _main
+        .globl _test
     _main:
-    push %ebp
-    mov %esp,%ebp
-    mov $123,%eax
-    push %eax
-    add $4,%esp
-    pop %ebp
-    mov $1,%eax
-    ret   
+        push %ebp
+        mov %esp,%ebp
+        push $2d
+        add $44,%esp
+        mov $1,%eax
+        pop %ebp
+        ret
+    _test:
+        push %ebp
+        mov %esp,%ebp
+        pop %ebp
+        xor %eax,%eax
+        ret 
    
    
 
 ###### USAGE:   
    
-        codeGenerator(transformer(parser(tokenizer("int main(){int a = 2;return 1;}"))))    
-        console.log(output)    
+        generateMain(processor(transformer(parser(tokenizer("int test(){return 0;} int main(){int a = 212;return 1;}")))))
+        generateFunc(foundFuncs)
+        wrapUp()  
