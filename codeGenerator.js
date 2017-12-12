@@ -35,7 +35,7 @@ function generateMain(funcMain) {
             if (funcMain.body[last].value === '0') {
               mainassembly += '\tadd $'+ stackuse*4 +',%esp\n\txor %eax,%eax\n\tpop %ebp\n\tret\n';
             } else {
-              mainassembly += '\tadd $4'+ stackuse*4 +',%esp\n\tmov $'+funcMain.body[last].value.toString(16) + ',%eax\n\tpop %ebp\n\tret\n';
+              mainassembly += '\tadd $'+ stackuse*4 +',%esp\n\tmov $'+funcMain.body[last].value.toString(16) + ',%eax\n\tpop %ebp\n\tret\n';
             }
           }
         }
