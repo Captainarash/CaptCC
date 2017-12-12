@@ -26,7 +26,7 @@ Below is the stage of the compiler which tell what the compiler can compile now:
         push %ebp
         mov %esp,%ebp
         push $2d
-        add $44,%esp
+        add $4,%esp
         mov $1,%eax
         pop %ebp
         ret
