@@ -1,6 +1,7 @@
 function tokenizer(input) {
   var current = 0;
   var tokens = [];
+  var LETTERS = /[a-zA-Z]/;
   while(current < input.length) {
     var char = input[current];
     if (char === '=') {
@@ -66,12 +67,19 @@ function tokenizer(input) {
     }
 
     if (char === '_') {
-      tokens.push({
-        type: 'underline',
-        value: '_'
-      });
-      current++;
-      continue;
+      if (LETTERS.test(input[current+1]) || NUMBERS.test(input[current+1])) {
+        char = input[++current];
+        var value = '_';
+        while(LETTERS.test(char) || NUMBERS.test(char)) {
+          value += char;
+          char = input[++current];
+        }
+        tokens.push({
+          type: 'name',
+          value: value
+        });
+        continue;
+      }
     }
 
     if (char === '+') {
@@ -281,7 +289,6 @@ function tokenizer(input) {
       continue;
     }
 
-    var LETTERS = /[a-zA-Z]/;
     if(LETTERS.test(char)) {
       var value = '';
 
