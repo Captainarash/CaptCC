@@ -335,7 +335,7 @@ function tokenizer(input) {
       continue;
     }
 
-    throw new TypeError('I don\'t know this character: ' + char);
+    throw new TypeError('Type Error! Unrecognized Character: ' + char);
   }
   return tokens;
 }

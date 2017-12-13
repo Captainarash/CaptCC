@@ -33,7 +33,7 @@ function traverser(ast, visitor) {
       case 'Word':
       case 'Delimiter':
       case 'Terminator':
-      case 'Sign':
+      case 'Equal':
         break;
 
       default:
@@ -76,10 +76,10 @@ function transformer(ast) {
       },
     },
 
-    Sign: {
+    Equal: {
       enter(node, parent) {
         parent._context.push({
-          type: 'Sign',
+          type: 'Equal',
           value: node.value
         });
       },

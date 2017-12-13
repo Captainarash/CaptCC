@@ -15,7 +15,7 @@ function generateMain(funcMain) {
       if(funcMain.body[i].type === 'Word') {
         if(funcMain.body[i].value === 'int') {
           if(funcMain.body[i+1].type === 'Word') {
-            if(funcMain.body[i+2].type === 'Sign') {
+            if(funcMain.body[i+2].type === 'Equal') {
               if(funcMain.body[i+2].value === '=') {
                 if(funcMain.body[i+3].type === 'NumberLiteral') {
                   mainassembly += '\tpush $' + parseInt(funcMain.body[i+3].value).toString(16) + '\n';
