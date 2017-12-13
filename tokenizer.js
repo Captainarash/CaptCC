@@ -58,7 +58,7 @@ function tokenizer(input) {
 
     if (char === '-') {
       tokens.push({
-        type: 'dash',
+        type: 'minus',
         value: '-'
       });
       current++;
