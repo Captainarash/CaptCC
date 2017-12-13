@@ -3,7 +3,7 @@ function tokenizer(input) {
   var tokens = [];
   while(current < input.length) {
     var char = input[current];
-    if (char.match(/(^|[^!><'=])=($|[^=])/) != null) {
+    if (char === '=') {
       tokens.push({
         type: 'equal',
         value: '='
@@ -11,6 +11,195 @@ function tokenizer(input) {
       current++;
       continue;
     }
+    if (char === '*') {
+      tokens.push({
+        type: 'star',
+        value: '*'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '#') {
+      tokens.push({
+        type: 'hash',
+        value: '#'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '!') {
+      tokens.push({
+        type: 'not',
+        value: '!'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '[') {
+      tokens.push({
+        type: 'bracket',
+        value: '['
+      });
+      current++;
+      continue;
+    }
+
+    if (char === ']') {
+      tokens.push({
+        type: 'bracket',
+        value: ']'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '-') {
+      tokens.push({
+        type: 'dash',
+        value: '-'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '_') {
+      tokens.push({
+        type: 'underline',
+        value: '_'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '+') {
+      tokens.push({
+        type: 'plus',
+        value: '+'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '/') {
+      tokens.push({
+        type: 'forwardslash',
+        value: '/'
+      });
+      current++;
+      continue;
+    }
+    var backslash = /\\/;
+    if (backslash.test(char)) {
+      tokens.push({
+        type: 'backslash',
+        value: '\\'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '?') {
+      tokens.push({
+        type: 'question',
+        value: '?'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '<') {
+      tokens.push({
+        type: 'less',
+        value: '<'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '>') {
+      tokens.push({
+        type: 'greater',
+        value: '>'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '|') {
+        tokens.push({
+          type: 'pipe',
+          value: '|'
+        });
+        current++;
+        continue;
+    }
+
+    if (char === '&') {
+      tokens.push({
+        type: 'and',
+        value: '&'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '%') {
+      tokens.push({
+        type: 'percent',
+        value: '%'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '$') {
+      tokens.push({
+        type: 'dollar',
+        value: '$'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '@') {
+      tokens.push({
+        type: 'at',
+        value: '@'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '^') {
+      tokens.push({
+        type: 'caret',
+        value: '^'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '~') {
+      tokens.push({
+        type: 'tilde',
+        value: '~'
+      });
+      current++;
+      continue;
+    }
+
+    if (char === '`') {
+      tokens.push({
+        type: 'grave',
+        value: '`'
+      });
+      current++;
+      continue;
+    }
+
     if (char === '(') {
       tokens.push({
         type: 'paren',
@@ -102,6 +291,22 @@ function tokenizer(input) {
       }
       tokens.push({
         type: 'name',
+        value: value
+      });
+      continue;
+    }
+
+    if(char === '\'') {
+      var value = '';
+      char = input[++current];
+
+      while(char !== '\''){
+        value += char;
+        char = input[++current];
+      }
+      char = input[++current];
+      tokens.push({
+        type: 'string',
         value: value
       });
       continue;

@@ -1,5 +1,5 @@
 var foundFuncs = [];
-function processesor(ast) {
+function processor(ast) {
   var astBody = ast.body;
   var mainFunc = findEntry(astBody);
   foundFuncs = findFuncs(astBody);
