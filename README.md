@@ -11,7 +11,7 @@ He made a Lisp Compiler to convert the Lisp syntax to JS.
 I want to convert C to ASM like a normal compiler does.   
 
 The project is still in its baby steps so please don't expect it to compile everything.   
-Below is the stage of the compiler which tell what the compiler can compile now:   
+Below is the stage of the compiler which tells what the compiler can compile now:   
 
 ###### Source:   
 
