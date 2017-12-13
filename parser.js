@@ -136,7 +136,7 @@ function parser(tokens) {
       token = tokens[++current];
 
       var node = {
-        type: 'Array',
+        type: 'Arr',
         params: []
       };
 

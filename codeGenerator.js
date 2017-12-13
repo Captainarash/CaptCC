@@ -20,7 +20,7 @@ function generateMain(funcMain) {
                 if(funcMain.body[i+3].type === 'NumberLiteral') {
                   mainassembly += '\tpush $' + parseInt(funcMain.body[i+3].value).toString(16) + '\n';
                   stackuse++;
-                  last = i + 3;
+                  last = i + 4;
                   break;
                   }
                 }

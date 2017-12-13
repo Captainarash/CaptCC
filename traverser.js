@@ -28,12 +28,14 @@ function traverser(ast, visitor) {
       case 'CodeDomain':
         traverseArray(node.params, node);
 
+      case 'Arr':
       case 'NumberLiteral':
       case 'StringLiteral':
       case 'Word':
       case 'Delimiter':
       case 'Terminator':
       case 'Equal':
+      case 'Pointer':
         break;
 
       default:
@@ -76,10 +78,46 @@ function transformer(ast) {
       },
     },
 
+    Arr: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Arr',
+          value: node.params
+        });
+      },
+    },
+
+    Pointer: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Pointer',
+          value: node.value
+        });
+      },
+    },
+
     Equal: {
       enter(node, parent) {
         parent._context.push({
           type: 'Equal',
+          value: node.value
+        });
+      },
+    },
+
+    Delimiter: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Delimiter',
+          value: node.value
+        });
+      },
+    },
+
+    Terminator: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Terminator',
           value: node.value
         });
       },
