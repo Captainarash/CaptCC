@@ -99,22 +99,6 @@ function parser(tokens) {
       }
     }
 
-    if (token.value === 'underline') {
-      current++;
-      return {
-        type: 'Underline',
-        value: token.value
-      };
-    }
-
-    if (token.value === 'plus') {
-      current++;
-      return {
-        type: 'Plus',
-        value: token.value
-      };
-    }
-
     if (token.type === 'name') {
         current++;
         return {
