@@ -106,10 +106,35 @@ function parser(tokens) {
           value: token.value
         };
     }
+
+    if (token.type === 'less') {
+        current++;
+        return {
+          type: 'Less',
+          value: token.value
+        };
+    }
+
+    if (token.type === 'greater') {
+        current++;
+        return {
+          type: 'Greater',
+          value: token.value
+        };
+    }
+
     if (token.type === 'comma') {
       current++;
       return {
         type: 'Delimiter',
+        value: token.value
+      };
+    }
+
+    if (token.type === 'colon') {
+      current++;
+      return {
+        type: 'Colon',
         value: token.value
       };
     }

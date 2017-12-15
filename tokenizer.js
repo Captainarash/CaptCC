@@ -226,6 +226,15 @@ function tokenizer(input) {
       continue;
     }
 
+    if (char === ':') {
+      tokens.push({
+        type: 'colon',
+        value: ':'
+      });
+      current++;
+      continue;
+    }
+
     if(char === ',') {
       tokens.push({
         type: 'comma',

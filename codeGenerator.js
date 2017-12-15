@@ -7,7 +7,6 @@ var funcAsm = [];
 var mainassembly = '';
 function generateMain(funcMain) {
   var last = 0;
-  //console.log(funcMain);
   if(funcMain.type === 'EntryPoint' && funcMain.name === 'main') {
     funcList += '\t.globl _main\n';
     mainassembly +='_main:\n\tpush %ebp\n\tmov %esp,%ebp\n';
@@ -58,21 +57,20 @@ function generateFunc(foundF) {
       '_' + foundF[i].name + ':\n\tpush %ebp\n\tmov %esp,%ebp\n'
     );
     var fBody = foundF[i].body;
-
+    var state = fBody[0];
     if (foundF[i].returnType === 'int') {
-      if (fBody[0].value === 'return') {
-        if (fBody[1].type === 'NumberLiteral') {
+      if (state[0].value === 'return') {
+        if (state[1].type === 'NumberLiteral') {
           funcAsm[i] += '\tpop %ebp\n';
-          if (fBody[1].value === '0') {
+          if (state[1].value === '0') {
             funcAsm[i] += '\txor %eax,%eax\n\tret\n';
           }
           else {
-          funcAsm[i] += '\tmov $'+ parseInt(fBody[1].value).toString(16) +',%eax\n\tret\n';
+          funcAsm[i] += '\tmov $'+ parseInt(state[1].value).toString(16) +',%eax\n\tret\n';
           }
         }
       }
     }
-    //console.log(funcAsm[i]);
   }
 }
 

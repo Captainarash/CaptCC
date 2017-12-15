@@ -36,6 +36,20 @@ function traverser(ast, visitor) {
       case 'Terminator':
       case 'Equal':
       case 'Pointer':
+      case 'IncByOne':
+      case 'DecByOne':
+      case 'Arrow':
+      case 'Plus':
+      case 'Minus':
+      case 'IncByNum':
+      case 'DecByNum':
+      case 'ComparisonE':
+      case 'ComparisonN':
+      case 'Include':
+      case 'Not':
+      case 'Colon':
+      case 'Less':
+      case 'Greater':
         break;
 
       default:
@@ -73,6 +87,132 @@ function transformer(ast) {
       enter(node, parent) {
         parent._context.push({
           type: 'Word',
+          value: node.value
+        });
+      },
+    },
+
+    IncByOne: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'IncByOne',
+          value: node.value
+        });
+      },
+    },
+
+    DecByOne: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'DecByOne',
+          value: node.value
+        });
+      },
+    },
+
+    DecByOne: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Arrow',
+          value: node.value
+        });
+      },
+    },
+
+    Plus: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Plus',
+          value: node.value
+        });
+      },
+    },
+
+    Minus: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Minus',
+          value: node.value
+        });
+      },
+    },
+
+    IncByNum: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'IncByNum',
+          value: node.value
+        });
+      },
+    },
+
+    DecByNum: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'DecByNum',
+          value: node.value
+        });
+      },
+    },
+
+    ComparisonE: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'ComparisonE',
+          value: node.value
+        });
+      },
+    },
+
+    ComparisonN: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'ComparisonN',
+          value: node.value
+        });
+      },
+    },
+
+    Include: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Include',
+          value: node.value
+        });
+      },
+    },
+
+    Not: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Not',
+          value: node.value
+        });
+      },
+    },
+
+    Colon: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Colon',
+          value: node.value
+        });
+      },
+    },
+
+    Less: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Less',
+          value: node.value
+        });
+      },
+    },
+
+    Greater: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Greater',
           value: node.value
         });
       },
@@ -152,7 +292,7 @@ function transformer(ast) {
 
         node._context = expression.arguments;
 
-        if (parent.type !== 'CodeCave') {
+        if (parent.type === 'Program') {
 
           expression = {
             type: 'Function',
