@@ -16,7 +16,10 @@ function verifier(foundFuncs) {
       throw new TypeError('return Type error in function definition for the function: ' + func.name);
       break;
     }
-    verifyFunctionArguments(func.args);
+    if (!verifyFunctionArguments(func.args)) {
+      throw new TypeError('Error in function definition: Invalid Arguments!');
+      break;
+    }
     current++;
   }
 }
@@ -37,9 +40,8 @@ function verifyFunctionArguments(funcArgs) {
       current++;
       continue;
     } else {
-      throw new TypeError('Error in function definition: Invalid Arguments!');
-      break;
+      return 0;
     }
   }
-  return 0;
+  return 1;
 }
