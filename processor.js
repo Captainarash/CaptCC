@@ -4,6 +4,8 @@ function processor(ast) {
   for (var i = 0; i < foundFuncs.length; i++) {
     var newBody = processBody(foundFuncs[i].body);
     foundFuncs[i].body = newBody;
+    var newFuncArgs = updateFunctionArguments(foundFuncs[i].args);
+    foundFuncs[i].args = newFuncArgs;
   }
   return foundFuncs;
 }
@@ -106,7 +108,6 @@ function processBody(inside) {
           current++;
           continue;
         } else if (inside[current - 2].value === 'switch') {
-          // first we find the colons
           var count = 0;
           var cases = [];
           var args = inside[current].arguments;
@@ -205,4 +206,44 @@ function processBody(inside) {
     continue;
   }
   return statements;
+}
+
+function updateFunctionArguments(cave) {
+  var current = 0;
+  var params = [];
+  var last = 0;
+  while (current < cave.length) {
+    if (cave[current].type === 'Delimiter') {
+      if ((current - last) === 2) {
+        if (cave[current - 2].type === 'Word' && cave[current - 1].type === 'Word') {
+          params.push({
+            type: cave[current - 2].value,
+            name: cave[current - 1].value
+          });
+          last += current;
+        } else {
+          throw new TypeError('Error in function definition: Invalid arguments!');
+        }
+      }
+      current++;
+      continue;
+    }
+    if (current === (cave.length - 1)) {
+      if ((current - last) === 2) {
+        if (cave[current - 1].type === 'Word' && cave[current].type === 'Word') {
+          params.push({
+            type: cave[current - 1].value,
+            name: cave[current].value
+          });
+          last += current;
+        } else {
+          throw new TypeError('Error in function definition: Invalid arguments!');
+        }
+      }
+      current++;
+      continue;
+    }
+    current++;
+  }
+  return params;
 }
