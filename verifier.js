@@ -5,33 +5,41 @@ var keywords = ['auto','double','int',
 'short','unsigned','continue','for','signed',
 'void','default','goto','sizeof','volatile','do',
 'if','static','while'];
+
 var dataTypes = ['int','char','float','double','void'];
 
 function verifier(foundFuncs) {
   var current = 0;
   while (current < foundFuncs.length) {
     var func = foundFuncs[current];
-    if (!verify_return_type(func.returnType)) {
-      console.log('return Type error in function definition for the function: ' + func.name);
+    if (!verifyReturnType(func.returnType)) {
+      throw new TypeError('return Type error in function definition for the function: ' + func.name);
       break;
     }
+    verifyFunctionArguments(func.args);
     current++;
   }
-  
 }
 
-function verify_return_type(returnType) {
-  for (var i = 0; i < keywords.length; i++) {
-    if (keywords[i] === returnType) {
-      for (var i = 0; i < dataTypes.length; i++) {
-        if (dataTypes[i] === returnType) {
-          return 1;
-        } else {
-          return 0;
-        }
-      }
+function verifyReturnType(returnType) {
+  if (dataTypes.indexOf(returnType) > -1) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+function verifyFunctionArguments(funcArgs) {
+  var current = 0;
+  while (current < funcArgs.length) {
+    var arg = funcArgs[current];
+    if ((dataTypes.indexOf(arg.type) > -1) && (keywords.indexOf(arg.name) === -1)) {
+      current++;
+      continue;
     } else {
-      return 0;
+      throw new TypeError('Error in function definition: Invalid Arguments!');
+      break;
     }
   }
+  return 0;
 }
