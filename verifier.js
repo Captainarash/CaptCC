@@ -12,11 +12,12 @@ function verifier(foundFuncs) {
   while (current < foundFuncs.length) {
     var func = foundFuncs[current];
     if (!verify_return_type(func.returnType)) {
-      console.log('return Type error in fuction definition for the function: ' + func.name);
+      console.log('return Type error in function definition for the function: ' + func.name);
       break;
     }
     current++;
   }
+  
 }
 
 function verify_return_type(returnType) {
