@@ -2,6 +2,7 @@ function tokenizer(input) {
   var current = 0;
   var tokens = [];
   var LETTERS = /[a-zA-Z]/;
+  var NEWLINE = /\n/;
   while(current < input.length) {
     var char = input[current];
     if (char === '=') {
@@ -92,13 +93,23 @@ function tokenizer(input) {
     }
 
     if (char === '/') {
-      tokens.push({
-        type: 'forwardslash',
-        value: '/'
-      });
-      current++;
+      if (input[++current] === '/') {
+        while (current < input.length && !NEWLINE.test(input[current])) {
+          current++;
+        }
+      } else if (input[current] === '*') {
+        current++;
+        while (current < input.length) {
+          if (input[current] === '*' && input[++current] === '/') {
+            current++;
+            break;
+          }
+          current++;
+        }
+      }
       continue;
     }
+
     var backslash = /\\/;
     if (backslash.test(char)) {
       tokens.push({
@@ -277,7 +288,6 @@ function tokenizer(input) {
       continue;
     }
 
-    var NEWLINE = /\n/;
     if(NEWLINE.test(char)) {
       current++;
       continue;
