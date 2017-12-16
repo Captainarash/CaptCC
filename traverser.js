@@ -50,6 +50,8 @@ function traverser(ast, visitor) {
       case 'Colon':
       case 'Less':
       case 'Greater':
+      case 'LessOrEqual':
+      case 'GreaterOrEqual':
         break;
 
       default:
@@ -213,6 +215,24 @@ function transformer(ast) {
       enter(node, parent) {
         parent._context.push({
           type: 'Greater',
+          value: node.value
+        });
+      },
+    },
+
+    GreaterOrEqual: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'GreaterOrEqual',
+          value: node.value
+        });
+      },
+    },
+
+    LessOrEqual: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'LessOrEqual',
           value: node.value
         });
       },

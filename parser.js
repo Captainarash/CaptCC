@@ -108,19 +108,33 @@ function parser(tokens) {
     }
 
     if (token.type === 'less') {
-        current++;
+      if(tokens[++current].type === 'equal') {
+      current++;
+        return {
+          type: 'LessOrEqual',
+          value: "<="
+        };
+      } else {
         return {
           type: 'Less',
           value: token.value
         };
+      }
     }
 
     if (token.type === 'greater') {
-        current++;
+      if(tokens[++current].type === 'equal') {
+      current++;
+        return {
+          type: 'GreaterOrEqual',
+          value: ">="
+        };
+      } else {
         return {
           type: 'Greater',
           value: token.value
         };
+      }
     }
 
     if (token.type === 'comma') {
