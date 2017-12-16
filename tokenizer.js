@@ -1,10 +1,24 @@
+// We start by tokenizing our input by declaring a function named tokenizer()
 function tokenizer(input) {
+  // variable current will be our index counter
   var current = 0;
+  // tokens will be holding all the tokens we found in our input
   var tokens = [];
+
+  // some regex for later use
   var LETTERS = /[a-zA-Z]/;
   var NEWLINE = /\n/;
+  var BACKSLASH = /\\/;
+  var WHITESPACE = /\s/;
+  var NUMBERS = /[0-9]/;
+
+  // now we start looping through each character of our input
   while(current < input.length) {
     var char = input[current];
+
+    /* From here on, we just compare our current character against all the characters
+      thet we accept. If there is a match we add 1 to our current variable, push our
+      character as a token to our tokens[] array and continue our loop */
     if (char === '=') {
       tokens.push({
         type: 'equal',
@@ -13,6 +27,7 @@ function tokenizer(input) {
       current++;
       continue;
     }
+
     if (char === '*') {
       tokens.push({
         type: 'star',
@@ -67,11 +82,16 @@ function tokenizer(input) {
       continue;
     }
 
+    /* When we are looking for an underline, we need to remember that an underline may be
+    the beginning of a name (any name, variable, function, struct, etc.)
+    So we have to check if the next character is alphanumeric or again underline; So we
+    group them together as 1 token. If the underline is there alone [:()], then we just
+    push it as is and continue our loop*/
     if (char === '_') {
-      if (LETTERS.test(input[current+1]) || NUMBERS.test(input[current+1])) {
+      if (LETTERS.test(input[current+1]) || NUMBERS.test(input[current+1]) || input[current+1] === '_') {
         char = input[++current];
         var value = '_';
-        while(LETTERS.test(char) || NUMBERS.test(char)) {
+        while(LETTERS.test(char) || NUMBERS.test(char) || input[current+1] === '_') {
           value += char;
           char = input[++current];
         }
@@ -80,6 +100,11 @@ function tokenizer(input) {
           value: value
         });
         continue;
+      } else {
+        tokens.push({
+          type: 'name',
+          value: '_'
+        });
       }
     }
 
@@ -110,8 +135,8 @@ function tokenizer(input) {
       continue;
     }
 
-    var backslash = /\\/;
-    if (backslash.test(char)) {
+
+    if (BACKSLASH.test(char)) {
       tokens.push({
         type: 'backslash',
         value: '\\'
@@ -282,18 +307,19 @@ function tokenizer(input) {
       continue;
     }
 
-    var WHITESPACE = /\s/;
+    // We just ignore WHITESPACE ...
     if(WHITESPACE.test(char)) {
       current++;
       continue;
     }
-
+    // ... and the NEWLINE
     if(NEWLINE.test(char)) {
       current++;
       continue;
     }
 
-    var NUMBERS = /[0-9]/;
+    /* If the character is a number, we need to check if the next character is also a number
+    in order to push them altogether as 1 number. i.e. if there is 762, we push "762" not "7","6","2" */
     if(NUMBERS.test(char)) {
       var value = '';
 
@@ -308,10 +334,12 @@ function tokenizer(input) {
       continue;
     }
 
+    /* while checking for LETTERS, we also check for NUMBERS and UNDERLINE
+    (i.e. imagine the input as s0m3_c00l_n4m3) */
     if(LETTERS.test(char)) {
       var value = '';
 
-      while(LETTERS.test(char)) {
+      while(LETTERS.test(char) || NUMBERS.test(input[current+1]) || input[current+1] === '_') {
         value += char;
         char = input[++current];
       }
@@ -322,6 +350,9 @@ function tokenizer(input) {
       continue;
     }
 
+    /* if the character is a sigle quote or a double quote, we will treat it as a string.
+    Until we haven't found the next double quote or single quote, we continue looping.
+    When found, then we push the whole value as a string. */
     if(char === '\'') {
       var value = '';
       char = input[++current];
@@ -354,6 +385,7 @@ function tokenizer(input) {
       continue;
     }
 
+      /*whatever else, we don't know jack! */
     throw new TypeError('Type Error! Unrecognized Character: ' + char);
   }
   return tokens;
