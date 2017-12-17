@@ -12,7 +12,7 @@ which no ones's gonna read.
 He made a Lisp Compiler to convert the Lisp syntax to JS.   
 I want to convert C to ASM.   
 
-There parts below are almost complete: 
+The parts below are almost complete: 
 
 1. tokenizer.js   
 2. parser.js   
