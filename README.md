@@ -9,8 +9,8 @@ But there was a problem. I didn't know OCaml or Bison or Flex. I wondered why no
 Parts of this project is derived from James Kyle talk at EmberConf 2016 (https://www.youtube.com/watch?v=Tar4WgAfMr4).  
 I appreciate his effort to make this concept fairly easy to understand instead of writing a giant book   
 which no ones's gonna read.    
-He made a Lisp Compiler to convert the Lisp syntax to JS.   
-I want to convert C to ASM.   
+He made a Lisp Compiler conveting Lisp syntax to JS.   
+I wanna convert C to ASM.   
 
 The parts below are almost complete: 
 
