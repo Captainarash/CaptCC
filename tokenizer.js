@@ -343,9 +343,11 @@ function tokenizer(input) {
         value += char;
         char = input[++current];
       }
+      // There is a mysterious bug which adds a WHITESPACE to the end of some Words when
+      //I push them into an array (??!!?!?!).
       tokens.push({
         type: 'name',
-        value: value
+        value: value.replace(/\s/g,'')
       });
       continue;
     }
