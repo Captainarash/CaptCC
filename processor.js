@@ -200,7 +200,17 @@ function processBody(inside) {
         });
         start++;
       }
-      statements.push(phrase);
+      statements.push({
+          type: 'Statement',
+          value: phrase
+      });
+    }
+
+    if (current === inside.length - 1) {
+      if (part.type !== 'Terminator' && part.type !== 'CodeDomain') {
+        throw new TypeError('Error in function definition: Function must return something\n or end with a ; \n or if this fucntion doesn\'t return anything\n you screwed up somewhere!');
+        break;
+      }
     }
     current++;
     continue;
