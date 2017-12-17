@@ -72,6 +72,9 @@ function verifyFunctionBody(funcBody) {
             continue;
         }
       }
+      if(!verifyFunctionBody(part.body)){
+        return 0;
+      }
     }
     current++;
   }
