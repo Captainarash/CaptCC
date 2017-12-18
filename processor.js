@@ -1,5 +1,13 @@
 function processor(ast) {
   var astBody = ast.body;
+  var globalItems = [];
+  var globalStatements = findGlobalStatements(astBody);
+  globalItems.push({
+    type: 'GlobalStatements',
+    body: globalStatements
+  });
+
+  var functionPack = [];
   var foundFuncs = findFuncs(astBody);
   for (var i = 0; i < foundFuncs.length; i++) {
     var newBody = processBody(foundFuncs[i].body);
@@ -7,9 +15,33 @@ function processor(ast) {
     var newFuncArgs = updateFunctionArguments(foundFuncs[i].args);
     foundFuncs[i].args = newFuncArgs;
   }
-  return foundFuncs;
+  functionPack.push({
+    type: 'Functions',
+    body: foundFuncs
+  });
+  var TheBigAST = [];
+  TheBigAST.push(globalItems,functionPack);
+  return TheBigAST;
 }
 
+function findGlobalStatements(astBody) {
+  var current = 0;
+  var last = 0;
+  var globalStatements = [];
+
+  while (current < astBody.length) {
+    if (astBody[current].type === 'Terminator') {
+      var statement = [];
+      for (var i = last; i < (current - last + 1); i++) {
+        statement.push(astBody[i]);
+      }
+      globalStatements.push(statement);
+      last += current;
+    }
+    current++;
+  }
+  return globalStatements;
+}
 
 function findFuncs(astBody) {
   var found = [];
