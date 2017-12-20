@@ -4,7 +4,7 @@ function initGenerate(TheBigAST) {
   var dataSection = generateDataSection(globalItems);
   var functionPack = generateTextHeader(TheBigAST[1]);
   var functionPack = TheBigAST[1];
-  
+
   console.log(dataSection);
 }
 
@@ -30,17 +30,15 @@ function generateDataSection(globalItems) {
 
 function generateDataHeader(globalVariables) {
     var header = '\t.section\t__DATA,__data\n';
-    for (var i = 0; i < globalVariables.length; i++) {
-      header += '\t.globl\t_' + globalVariables[i].name + '\n';
-    }
     return header;
 }
 function generateDataBody(globalVariables) {
   var dataSection = '';
   for (var i = 0; i < globalVariables.length; i++) {
+    dataSection += '\t.globl\t_' + globalVariables[i].name + '\n';
     dataSection += '_' + globalVariables[i].name + ':\n';
     if (globalVariables[i].type === 'int') {
-      dataSection += '\t.long\t' + globalVariables[i].value + '\n';
+      dataSection += '\t.long\t' + globalVariables[i].value + '\n\n';
     }
   }
   return dataSection;
