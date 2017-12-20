@@ -1,11 +1,24 @@
 function initGenerate(TheBigAST) {
-  globalItems = TheBigAST[0];
+  var globalItems = TheBigAST[0];
+
   var dataSection = generateDataSection(globalItems);
+  var functionPack = generateTextHeader(TheBigAST[1]);
+  var functionPack = TheBigAST[1];
+  
   console.log(dataSection);
 }
+
+function findFunctionNames(functionPack) {
+  var functionNames = [];
+  for (var i = 0; i < functionPack.length; i++) {
+    functionNames.push(functionPack[i].name);
+  }
+  return functionNames;
+}
+
 function generateTextHeader() {
-  var a = '\t.section\t__TEXT,__text,regular,pure_instructions\n';
-  return a;
+  var header = '\t.section\t__TEXT,__text,regular,pure_instructions\n';
+  return header;
 }
 function generateDataSection(globalItems) {
   var globalVariables = findGlobalVariables(globalItems);
@@ -18,7 +31,7 @@ function generateDataSection(globalItems) {
 function generateDataHeader(globalVariables) {
     var header = '\t.section\t__DATA,__data\n';
     for (var i = 0; i < globalVariables.length; i++) {
-      header += '\t.global\t_' + globalVariables[i].name + '\n';
+      header += '\t.globl\t_' + globalVariables[i].name + '\n';
     }
     return header;
 }
