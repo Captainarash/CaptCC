@@ -25,18 +25,22 @@ function processor(ast) {
 }
 
 function findGlobalStatements(astBody) {
+  var astBodyClone = astBody;
   var current = 0;
   var last = 0;
   var globalStatements = [];
 
-  while (current < astBody.length) {
-    if (astBody[current].type === 'Terminator') {
+  while (current < astBodyClone.length) {
+    if (astBodyClone[current].type === 'Terminator') {
       var statement = [];
-      for (var i = last; i < (current - last + 1); i++) {
-        statement.push(astBody[i]);
+      for (var i = 0; i < current + 1; i++) {
+        statement.push(astBodyClone[i]);
+      }
+      for (var i = 0; i < current + 1; i++) {
+        astBodyClone.shift();
       }
       globalStatements.push(statement);
-      last += current;
+      current = 0;
     }
     current++;
   }
