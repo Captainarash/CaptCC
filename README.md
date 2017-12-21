@@ -19,7 +19,44 @@ The parts below are almost complete:
 3. traverser.js   
 4. processor.js   
 
-To be added and/or completed:   
+To be completed:   
    
 5. verifier.js   
-6. codeGenerator.js   
+6. codeGenerator.js     
+
+
+###### State of the project and usage:   
+
+    initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; return 1;}")))))   
+
+###### Output:   
+    .section	__TEXT,__text,regular,pure_instructions
+    .globl	_test
+
+    _test:
+	    xor	rax,rax
+	    ret
+
+	    .globl	_main
+    
+    _main:
+	    push	rbp
+	    mov	rbp,rsp
+	    push	1
+	    push	8
+	    inc	DWORD PTR +8[rsp]
+	    inc	DWORD PTR [rsp]
+	    add	rsp,16
+	    pop	rbp
+	    mov	rax,1
+	    ret
+    
+       .section	__DATA,__data
+	    .globl	_glob
+    _glob:
+	    .long	10
+    
+	    .globl	_jack
+    _jack:
+	    .long	36
+
