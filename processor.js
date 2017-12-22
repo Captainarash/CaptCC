@@ -148,7 +148,6 @@ function processBody(inside) {
           var cases = [];
           var args = inside[current].arguments;
           args.reverse();
-          console.log(args);
           var reverseCaseParts = [];
           while (count < args.length) {
             if (args[count].type !== 'Colon') {
@@ -181,7 +180,7 @@ function processBody(inside) {
           continue;
         }
       } else {
-        throw new SyntaxError('Invalid Syntax!');
+        throw new TypeError('Invalid Syntax!');
       }
     } else if (part.type === 'CodeDomain' && inside[current - 1].value === 'else') {
       var inelse = processBody(part.arguments);
@@ -204,7 +203,7 @@ function processBody(inside) {
           continue;
         }
       } else {
-        throw new SyntaxError('Invalid Syntax!');
+        throw new TypeError('Invalid Syntax!');
       }
     }
 
