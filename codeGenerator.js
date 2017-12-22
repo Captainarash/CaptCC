@@ -14,6 +14,7 @@ function initGenerate(TheBigAST) {
 function generateFunctionAssembly(functionBody) {
   var current = 0;
   var functionAssembly = "";
+  var ifParts = [];
   if (functionBody.length !== 1) {
     functionAssembly += initStack();
   }
@@ -25,27 +26,10 @@ function generateFunctionAssembly(functionBody) {
     }
     if (part.type === 'Statement') {
         var partValue = part.value;
-        if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) !== -1) {
-          if (partValue[0].value === 'return') {
-            functionAssembly += generateReturn(partValue[1]);
-          }
-          if (partValue[0].value === 'int') {
-              if (partValue.length === 5) {
-                functionAssembly += generateVariableAssignment(partValue[0].value, partValue[1].value, partValue[3].value);
-              }
-          }
-        }
-        if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) === -1) {
-          for (var i = 0; i < stack.length; i++) {
-            if (stack[i].type === 'LocalVariable') {
-              if (stack[i].name === partValue[0].value) {
-                if (partValue[1].type === 'IncByOne') {
-                  functionAssembly += generateIncByOne(reverseOffset(i));
-                }
-              }
-            }
-          }
-        }
+        functionAssembly += checkForStatements(partValue);
+
+    } else if (part.type === 'if') {
+      functionAssembly += checkForIfs(part);
     }
     current++;
   }
@@ -193,4 +177,83 @@ function generateIncByOne(offset){
       incAssembly = '\tinc\tDWORD PTR +' + (offset * 8).toString() + '[rsp]\n';
     }
     return incAssembly;
+}
+
+function generateIfClause(offset, cmpValue, name) {
+  var ifClause = '';
+  if (offset === 0) {
+    ifClause += '\tcmp\tDWORD PTR [rsp],' + cmpValue  + '\n';
+  } else {
+    ifClause += '\tcmp\tDWORD PTR +' + ((parseInt(offset))*8).toString() + '[rsp],' + cmpValue  + '\n';
+  }
+  ifClause += '\tjne _if' + name + cmpValue + '_after\n';
+  return ifClause;
+}
+
+function generateIfInside(ifInside, ifName, ifCmpValue) {
+  var current = 0;
+  var assembledifInside = '';
+  var stacklen = stack.length;
+  while (current < ifInside.length) {
+    var part = ifInside[current];
+    if (part.type === 'Statement') {
+      var partValue = part.value;
+      assembledifInside += checkForStatements(partValue);
+    }
+    current++;
+  }
+  if (stacklen < stack.length) {
+    var counter = 0;
+    while (stacklen < stack.length) {
+      stack.pop();
+      counter++;
+      stacklen++;
+    }
+    assembledifInside += '\tadd\trsp,' + (counter * 8).toString() + '\n';
+  }
+  assembledifInside += '\n';
+  return assembledifInside;
+}
+
+function checkForStatements(partValue) {
+  var functionAssembly = '';
+  if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) !== -1) {
+    if (partValue[0].value === 'return') {
+      functionAssembly += generateReturn(partValue[1]);
+    }
+    if (partValue[0].value === 'int') {
+        if (partValue.length === 5) {
+          functionAssembly += generateVariableAssignment(partValue[0].value, partValue[1].value, partValue[3].value);
+        }
+    }
+    for (var i = 0; i < stack.length; i++) {
+      if (stack[i].type === 'LocalVariable') {
+        if (stack[i].name === partValue[0].value) {
+          if (partValue[1].type === 'IncByOne') {
+            assembledifInside += generateIncByOne(reverseOffset(i));
+          }
+        }
+      }
+    }
+  }
+  return functionAssembly;
+}
+
+function checkForIfs(part) {
+  var functionAssembly = '';
+  if (part.condition.length === 3) {
+    var cond = part.condition;
+    if (cond[1].type === 'ComparisonE') {
+      if (cond[0].type === 'Word' && cond[2].type === 'NumberLiteral') {
+        for (var i = 0; i < stack.length; i++) {
+          if (stack[i].type === 'LocalVariable' && stack[i].name === cond[0].value) {
+            functionAssembly += generateIfClause(reverseOffset(i), cond[2].value, cond[0].value);
+            functionAssembly += generateIfInside(part.body, cond[0].value, cond[2].value);
+            functionAssembly += '_if' + cond[0].value + cond[2].value + '_after:\n';
+          }
+        }
+      }
+    }
+  }
+  return functionAssembly;
 }
