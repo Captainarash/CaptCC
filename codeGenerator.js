@@ -215,7 +215,6 @@ function generateIfInside(ifInside, ifName, ifCmpValue) {
 }
 
 function checkForStatements(partValue) {
-  console.log(partValue);
   var functionAssembly = '';
   if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) !== -1) {
     if (partValue[0].value === 'return') {
