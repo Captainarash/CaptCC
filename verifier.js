@@ -39,6 +39,7 @@ function verifier(foundFuncs) {
 
     current++;
   }
+  return 1;
 }
 
 
@@ -70,6 +71,15 @@ function verifyFunctionBody(funcBody) {
         } else if (cond[0].type === 'NumberLiteral') {
             current++;
             continue;
+        }
+      } else if (cond.length === 3) {
+        if (cond[1].type === 'ComparisonE' || cond[1].type === 'ComparisonN' || cond[1].type === 'Greater' || cond[1].type === 'GreaterOrEqual' || cond[1].type === 'Less' || cond[1].type === 'LessOrEqual') {
+          if (keywords.indexOf(cond[0].value) === -1 && keywords.indexOf(cond[1].value) === -1) {
+            current++;
+            continue;
+          } else {
+            return 0;
+          }
         }
       }
       if(!verifyFunctionBody(part.body)){
