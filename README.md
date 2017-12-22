@@ -27,7 +27,7 @@ To be completed:
 
 ###### State of the project and usage:   
 
-      initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; if(v == 2) {int y = 5 ;} return 1;}")))))      
+    initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; int k = 4 + 3 + 5; if(v == 2) {int y = 5 ;} return 1;}")))))          
 
 ###### Output:   
 	    .section	__TEXT,__text,regular,pure_instructions
@@ -36,31 +36,36 @@ To be completed:
     _test:
 	    xor	rax,rax
 	    ret
-
+    
 	    .globl	_main
-
+    
     _main:
 	    push	rbp
 	    mov	rbp,rsp
 	    push	1
 	    push	8
-	    cmp	DWORD PTR +8[rsp],2
+	    inc	DWORD PTR +8[rsp]
+	    inc	DWORD PTR [rsp]
+	    xor	rax,rax
+	    add	rax,4
+	    add	rax,3
+	    push	rax
+	    cmp	DWORD PTR +16[rsp],2
 	    jne _ifv2_after
 	    push	5
 	    add	rsp,8
     
     _ifv2_after:
-	    add	rsp,16
+	    add	rsp,24
 	    pop	rbp
 	    mov	rax,1
 	    ret
-
+    
 	    .section	__DATA,__data
 	    .globl	_glob
     _glob:
 	    .long	10
-
+    
 	    .globl	_jack
     _jack:
-	    .long	36
-
+	    .long	36   
