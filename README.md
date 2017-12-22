@@ -55,8 +55,8 @@ To be completed:
 	    mov	rax,1
 	    ret
 
-	.section	__DATA,__data
-	.globl	_glob
+	    .section	__DATA,__data
+	    .globl	_glob
     _glob:
 	    .long	10
 
