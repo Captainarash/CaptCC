@@ -27,7 +27,6 @@ function generateFunctionAssembly(functionBody) {
     if (part.type === 'Statement') {
         var partValue = part.value;
         functionAssembly += checkForStatements(partValue);
-
     } else if (part.type === 'if') {
       functionAssembly += checkForIfs(part);
     }
@@ -216,6 +215,7 @@ function generateIfInside(ifInside, ifName, ifCmpValue) {
 }
 
 function checkForStatements(partValue) {
+  console.log(partValue);
   var functionAssembly = '';
   if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) !== -1) {
     if (partValue[0].value === 'return') {
@@ -224,13 +224,16 @@ function checkForStatements(partValue) {
     if (partValue[0].value === 'int') {
         if (partValue.length === 5) {
           functionAssembly += generateVariableAssignment(partValue[0].value, partValue[1].value, partValue[3].value);
+        } else if (partValue.length > 5) {
+          functionAssembly += generateVariableAssignmentWithAddition(partValue);
         }
     }
+  } else if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) === -1) {
     for (var i = 0; i < stack.length; i++) {
       if (stack[i].type === 'LocalVariable') {
         if (stack[i].name === partValue[0].value) {
           if (partValue[1].type === 'IncByOne') {
-            assembledifInside += generateIncByOne(reverseOffset(i));
+            functionAssembly += generateIncByOne(reverseOffset(i));
           }
         }
       }
@@ -256,4 +259,38 @@ function checkForIfs(part) {
     }
   }
   return functionAssembly;
+}
+
+function generateVariableAssignmentWithAddition(statement) {
+  var current = 0;
+  var counter = 0;
+  var sum = 0;
+  var statementAssembly = '';
+  statementAssembly = '\txor\trax,rax\n';
+  while (current < statement.length) {
+    if (statement[current].type === 'Equal') {
+      var varName = statement[current - 1].value;
+      current += 2;
+      if (statement[current].type === 'Plus') {
+        if (statement[current - 1].type === 'NumberLiteral' && statement[current + 1].type === 'NumberLiteral') {
+          sum += parseInt(statement[current - 1].value);
+          statementAssembly += '\tadd\trax,' + statement[current - 1].value + '\n';
+          sum += parseInt(statement[current + 1].value);
+          statementAssembly += '\tadd\trax,' + statement[current + 1].value + '\n';
+          counter++;
+        }
+      }
+    }
+    current++;
+  }
+  if (counter !== 0) {
+    statementAssembly += '\tpush\trax\n';
+    stack.push({
+      type: 'LocalVariable',
+      name: statement[1].value,
+      value: sum
+    });
+    return statementAssembly;
+  }
+  return 'Error!';
 }
