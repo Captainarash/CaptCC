@@ -12,7 +12,7 @@ which no ones's gonna read.
 He made a Lisp Compiler conveting Lisp syntax to JS.   
 I wanna convert C to ASM.   
 
-The parts below are almost complete: 
+###### The parts below are almost complete: 
 
 1. tokenizer.js   
 2. parser.js   
@@ -25,11 +25,33 @@ To be completed:
 6. codeGenerator.js     
 
 
-###### State of the project and usage:   
+#### State of the project:
+
+###### What can be compiled:
+
+* Function Defenitions
+* Integer Variable Assignments
+* Increments (var++)
+* Additions and Subtraction
+* Global Variables
+* Return Statement
+* Ifs Only (not nested, not if/elseif/else). Limited Condition support currently.
+
+###### What can be parsed into the AST:
+
+* Every legit character in C syntax
+* Everything is grouped and parsed in a meaningful way
+* Current groupings are "Global Items" and "Functions" (sorry, no includes)
+
+###### What's missing fromthe parser:
+
+Structs! :( Will be added soon.
+
+##### Usage in browser console:
 
     initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; int k = -4 - 3 + 5 - 7 - 8 + 2 - 32; if(v == 2) {int y = 5 ;} return 1;}")))))                
 
-###### Output:   
+##### Output:   
 	    .section	__TEXT,__text,regular,pure_instructions
 	    .globl	_test
     
