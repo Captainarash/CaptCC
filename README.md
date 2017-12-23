@@ -27,7 +27,7 @@ To be completed:
 
 ###### State of the project and usage:   
 
-    initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; int k = 4 + 3 + 5; if(v == 2) {int y = 5 ;} return 1;}")))))          
+    initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; int k = 4 + 3 + 5 + 7 + 8 + 2 + 32; if(v == 2) {int y = 5 ;} return 1;}")))))             
 
 ###### Output:   
 	    .section	__TEXT,__text,regular,pure_instructions
@@ -49,6 +49,11 @@ To be completed:
 	    xor	rax,rax
 	    add	rax,4
 	    add	rax,3
+	    add	rax,5
+	    add	rax,7
+	    add	rax,8
+	    add	rax,2
+	    add	rax,32
 	    push	rax
 	    cmp	DWORD PTR +16[rsp],2
 	    jne _ifv2_after
