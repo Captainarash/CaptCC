@@ -269,15 +269,18 @@ function generateVariableAssignmentWithAddition(statement) {
   while (current < statement.length) {
     if (statement[current].type === 'Equal') {
       var varName = statement[current - 1].value;
-      current += 2;
-      if (statement[current].type === 'Plus') {
-        if (statement[current - 1].type === 'NumberLiteral' && statement[current + 1].type === 'NumberLiteral') {
-          sum += parseInt(statement[current - 1].value);
-          statementAssembly += '\tadd\trax,' + statement[current - 1].value + '\n';
+      var pmCounter = current + 2;
+      while (statement[pmCounter].type === 'Plus') {
+        if (statement[pmCounter - 1].type === 'NumberLiteral' && statement[pmCounter + 1].type === 'NumberLiteral') {
+          if (counter === 0) {
+            sum += parseInt(statement[pmCounter - 1].value);
+            statementAssembly += '\tadd\trax,' + statement[pmCounter - 1].value + '\n';
+          }
           sum += parseInt(statement[current + 1].value);
-          statementAssembly += '\tadd\trax,' + statement[current + 1].value + '\n';
+          statementAssembly += '\tadd\trax,' + statement[pmCounter + 1].value + '\n';
           counter++;
         }
+        pmCounter += 2;
       }
     }
     current++;
