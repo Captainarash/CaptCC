@@ -269,15 +269,30 @@ function generateVariableAssignmentWithAddition(statement) {
   while (current < statement.length) {
     if (statement[current].type === 'Equal') {
       var varName = statement[current - 1].value;
-      var pmCounter = current + 2;
-      while (statement[pmCounter].type === 'Plus') {
+      var pmCounter = 0 ;
+      if (statement[current + 1].type === 'Minus') {
+        pmCounter = current + 3;
+      } else {
+        pmCounter = current + 2;
+      }
+      while (statement[pmCounter].type === 'Plus' || statement[pmCounter].type === 'Minus') {
         if (statement[pmCounter - 1].type === 'NumberLiteral' && statement[pmCounter + 1].type === 'NumberLiteral') {
           if (counter === 0) {
-            sum += parseInt(statement[pmCounter - 1].value);
-            statementAssembly += '\tadd\trax,' + statement[pmCounter - 1].value + '\n';
+            if (statement[current + 1].type === 'Minus') {
+              sum -= parseInt(statement[pmCounter - 1].value);
+              statementAssembly += '\tsub\trax,' + statement[pmCounter - 1].value + '\n';
+            } else {
+              sum += parseInt(statement[pmCounter - 1].value);
+              statementAssembly += '\tadd\trax,' + statement[pmCounter - 1].value + '\n';
+            }
           }
-          sum += parseInt(statement[current + 1].value);
-          statementAssembly += '\tadd\trax,' + statement[pmCounter + 1].value + '\n';
+          if (statement[pmCounter].type === 'Plus') {
+            sum += parseInt(statement[current + 1].value);
+            statementAssembly += '\tadd\trax,' + statement[pmCounter + 1].value + '\n';
+          } else if (statement[pmCounter].type === 'Minus') {
+            sum -= parseInt(statement[current + 1].value);
+            statementAssembly += '\tsub\trax,' + statement[pmCounter + 1].value + '\n';
+          }
           counter++;
         }
         pmCounter += 2;
