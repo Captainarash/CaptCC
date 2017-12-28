@@ -49,7 +49,37 @@ Structs! :( Will be added soon.
 
 ##### Usage in browser console:
 
-    initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; int k = -4 - 3 + 5 - 7 - 8 + 2 - 32; int e = v; if(v == 2) {int y = 5; y++;} if(k == 35) {int p = 55 + 34;} return 1;}")))))                   
+    initGenerate(processor(transformer(parser(tokenizer("
+    //some comment here :D
+    int glob = 10;
+    int jack = 36;
+    int test(){
+        return 0;
+    }
+    int main(){
+        int v = 1;
+        int f = 8;
+	
+        v++;
+	f++;
+	
+        int k = -4 - 3 + 5 - 7 - 8 + 2 - 32;
+	
+        int e = v;
+	
+        if(v == 2) {
+            int y = 5;
+            y++;
+        }
+	
+        if(k == 35) {
+            int p = 55 + 34;
+        }
+	
+	return 1;
+    }
+    "
+    )))))                   
 
 ##### Output:   
 	    .section	__TEXT,__text,regular,pure_instructions
