@@ -53,9 +53,11 @@ Structs! :( Will be added soon.
     //some comment here :D
     int glob = 10;
     int jack = 36;
+    
     int test(){
         return 0;
     }
+    
     int main(){
         int v = 1;
         int f = 8;
