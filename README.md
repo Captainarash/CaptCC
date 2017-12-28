@@ -43,7 +43,7 @@ To be completed:
 * Everything is grouped and parsed in a meaningful way
 * Current groupings are "Global Items" and "Functions" (sorry, no includes)
 
-###### What's missing fromthe parser:
+###### What's missing from the parser:
 
 Structs! :( Will be added soon.
 
