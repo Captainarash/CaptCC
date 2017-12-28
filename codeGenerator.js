@@ -1,7 +1,10 @@
 var stack = [];
+var allFuncs = [];
+var volatileRegs = ['rcx','rdx','r8','r9'];
 function initGenerate(TheBigAST) {
   var globalItems = TheBigAST[0];
   var functionBox = TheBigAST[1];
+  allFuncs = findAllFuncs(functionBox[0].body);
   var funcsAsm = findFunctionNames(functionBox[0].body);
   var dataSection = generateDataSection(globalItems);
   var textHeader = generateTextHeader(TheBigAST[1]);
@@ -11,12 +14,36 @@ function initGenerate(TheBigAST) {
   return 0;
 }
 
-function generateFunctionAssembly(functionBody) {
+function findAllFuncs(funcDefs) {
+  var current = 0;
+  allFuncs = [];
+  while (current < funcDefs.length) {
+    allFuncs.push(funcDefs[current].name);
+    current++;
+  }
+  return allFuncs;
+}
+
+function generateFunctionAssembly(functionBody, functionArgs) {
   var current = 0;
   var functionAssembly = "";
   var ifParts = [];
-  if (functionBody.length !== 1) {
+  if (functionBody.length !== 1 || functionArgs.length !== 0) {
     functionAssembly += initStack();
+  }
+  if (functionArgs.length !== 0) {
+    var regIndex = 0
+    for (var i = 0; i < functionArgs.length; i++) {
+      if (functionArgs[i].type === 'int') {
+        functionAssembly += '\tpush ' + volatileRegs[regIndex] + '\n';
+        stack.push({
+          type: 'LocalVariable',
+          name: functionArgs[i].name,
+          value: volatileRegs[regIndex]
+        });
+        regIndex++;
+      }
+    }
   }
   while (current < functionBody.length) {
     var part = functionBody[current];
@@ -29,6 +56,8 @@ function generateFunctionAssembly(functionBody) {
         functionAssembly += checkForStatements(partValue);
     } else if (part.type === 'if') {
       functionAssembly += checkForIfs(part);
+    } else if (part.type === 'Call') {
+      functionAssembly += generateCall(part);
     }
     current++;
   }
@@ -63,7 +92,7 @@ function findFunctionNames(functionPack) {
     functionNames.push(functionPack[i].name);
     funcsAsm += '\t.globl	_' + functionPack[i].name +'\n\n';
     funcsAsm += '_' + functionPack[i].name + ':\n';
-    funcsAsm += generateFunctionAssembly(functionPack[i].body);
+    funcsAsm += generateFunctionAssembly(functionPack[i].body, functionPack[i].args);
   }
   return funcsAsm;
 }
@@ -215,16 +244,16 @@ function checkForStatements(part) {
         }
     }
   } else if (part[0].type === 'Word' && keywords.indexOf(part[0].value) === -1) {
-    for (var i = 0; i < stack.length; i++) {
-      if (stack[i].type === 'LocalVariable') {
-        if (stack[i].name === part[0].value) {
-          if (part[1].type === 'IncByOne') {
-            functionAssembly += generateIncByOne(reverseOffset(i));
+      for (var i = 0; i < stack.length; i++) {
+        if (stack[i].type === 'LocalVariable') {
+          if (stack[i].name === part[0].value) {
+            if (part[1].type === 'IncByOne') {
+              functionAssembly += generateIncByOne(reverseOffset(i));
+            }
           }
         }
       }
     }
-  }
   return functionAssembly;
 }
 
@@ -246,7 +275,28 @@ function checkForIfs(part) {
   }
   return functionAssembly;
 }
-
+function generateCall(part) {
+  callAsm = '';
+  if (allFuncs.indexOf(part.callee) !== -1) {
+    var params = part.params;
+    var current = 0;
+    var regIndex = 0;
+    while (current < params.length) {
+      if (params[current].type === 'Delimiter') {
+        current++;
+        continue;
+      } else if (params[current].type === 'NumberLiteral') {
+        callAsm += '\tmov ' + volatileRegs[regIndex] + ',' + params[current].value + '\n';
+        regIndex++;
+        current++;
+        continue;
+      }
+      current++;
+    }
+    callAsm += '\tcall ' + part.callee + '\n';
+  }
+  return callAsm;
+}
 function generateVariableAssignment(varType, varName, varValue) {
   assignmentAsm = '';
   if (varValue.type === 'NumberLiteral') {
