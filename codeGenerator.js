@@ -140,19 +140,6 @@ function generateReturn(returnValue) {
     return retAsm;
 }
 
-function generateVariableAssignment(varType, varName, varValue) {
-  assignmentAsm = '';
-  if (varType === 'int') {
-    assignmentAsm += '\tpush\t' + varValue + '\n';
-    stack.push({
-      type: 'LocalVariable',
-      name: varName,
-      value: varValue
-    });
-  }
-  return assignmentAsm;
-}
-
 function clearStack() {
   var counter = 0;
   for (var i = 0; i < stack.length; i++) {
@@ -214,24 +201,24 @@ function generateIfInside(ifInside, ifName, ifCmpValue) {
   return assembledifInside;
 }
 
-function checkForStatements(partValue) {
+function checkForStatements(part) {
   var functionAssembly = '';
-  if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) !== -1) {
-    if (partValue[0].value === 'return') {
-      functionAssembly += generateReturn(partValue[1]);
+  if (part[0].type === 'Word' && keywords.indexOf(part[0].value) !== -1) {
+    if (part[0].value === 'return') {
+      functionAssembly += generateReturn(part[1]);
     }
-    if (partValue[0].value === 'int') {
-        if (partValue.length === 5) {
-          functionAssembly += generateVariableAssignment(partValue[0].value, partValue[1].value, partValue[3].value);
-        } else if (partValue.length > 5) {
-          functionAssembly += generateVariableAssignmentWithAddition(partValue);
+    if (part[0].value === 'int') {
+        if (part.length === 5) {
+          functionAssembly += generateVariableAssignment(part[0].value, part[1].value, part[3]);
+        } else if (part.length > 5) {
+          functionAssembly += generateVariableAssignmentWithAddition(part);
         }
     }
-  } else if (partValue[0].type === 'Word' && keywords.indexOf(partValue[0].value) === -1) {
+  } else if (part[0].type === 'Word' && keywords.indexOf(part[0].value) === -1) {
     for (var i = 0; i < stack.length; i++) {
       if (stack[i].type === 'LocalVariable') {
-        if (stack[i].name === partValue[0].value) {
-          if (partValue[1].type === 'IncByOne') {
+        if (stack[i].name === part[0].value) {
+          if (part[1].type === 'IncByOne') {
             functionAssembly += generateIncByOne(reverseOffset(i));
           }
         }
@@ -258,6 +245,41 @@ function checkForIfs(part) {
     }
   }
   return functionAssembly;
+}
+
+function generateVariableAssignment(varType, varName, varValue) {
+  assignmentAsm = '';
+  if (varValue.type === 'NumberLiteral') {
+    if (varType === 'int') {
+      assignmentAsm += '\tpush\t' + varValue.value + '\n';
+      stack.push({
+        type: 'LocalVariable',
+        name: varName,
+        value: varValue.value
+      });
+    }
+  } else if (varValue.type === 'Word') {
+    if (varType === 'int') {
+      for (var i = 0; i < stack.length; i++) {
+        if (stack[i].type === 'LocalVariable') {
+          if (stack[i].name === varValue.value) {
+            if (i !== stack.length) {
+              assignmentAsm += '\tmov\trax,+' + (reverseOffset(i) * 8).toString() + '[rsp]\n';
+            } else {
+              assignmentAsm += '\tmov\trax,[rsp]\n';
+            }
+            assignmentAsm += '\tpush\trax\n';
+            stack.push({
+              type: 'LocalVariable',
+              name: varName,
+              value: stack[i].value
+            });
+          }
+        }
+      }
+    }
+  }
+  return assignmentAsm;
 }
 
 function generateVariableAssignmentWithAddition(statement) {
