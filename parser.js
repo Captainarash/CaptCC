@@ -130,6 +130,36 @@ function parser(tokens) {
       }
     }
 
+    if (token.type === 'and') {
+      if(tokens[++current].type === 'and') {
+      current++;
+        return {
+          type: 'AndAnd',
+          value: "&&"
+        };
+      } else {
+        return {
+          type: 'And',
+          value: token.value
+        };
+      }
+    }
+
+    if (token.type === 'pipe') {
+      if(tokens[++current].type === 'pipe') {
+      current++;
+        return {
+          type: 'OrOr',
+          value: "||"
+        };
+      } else {
+        return {
+          type: 'Pipe',
+          value: token.value
+        };
+      }
+    }
+
     if (token.type === 'greater') {
       if(tokens[++current].type === 'equal') {
       current++;
@@ -140,6 +170,21 @@ function parser(tokens) {
       } else {
         return {
           type: 'Greater',
+          value: token.value
+        };
+      }
+    }
+
+    if (token.type === 'caret') {
+      if(tokens[++current].type === 'equal') {
+      current++;
+        return {
+          type: 'XorEqual',
+          value: "^="
+        };
+      } else {
+        return {
+          type: 'Xor',
           value: token.value
         };
       }
@@ -214,6 +259,14 @@ function parser(tokens) {
       current++;
       return {
         type: 'Terminator',
+        value: token.value
+      };
+    }
+
+    if (token.type === 'dot') {
+      current++;
+      return {
+        type: 'Dot',
         value: token.value
       };
     }
