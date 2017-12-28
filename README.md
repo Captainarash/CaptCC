@@ -62,10 +62,10 @@ Structs! :( Will be added soon.
 	    .globl	_main
 
     _main:
-	    push	rbp
+	    push rbp
 	    mov	rbp,rsp
-	    push	1
-	    push	8
+	    push 1
+	    push 8
 	    inc	DWORD PTR +8[rsp]
 	    inc	DWORD PTR [rsp]
 	    xor	rax,rax
@@ -76,12 +76,12 @@ Structs! :( Will be added soon.
 	    sub	rax,8
 	    add	rax,2
 	    sub	rax,32
-	    push	rax
+	    push rax
 	    mov	rax,+16[rsp]
-	    push	rax
+	    push rax
 	    cmp	DWORD PTR +24[rsp],2
 	    jne _ifv2_after
-	    push	5
+	    push 5
 	    inc	DWORD PTR [rsp]
 	    add	rsp,8
 
@@ -91,7 +91,7 @@ Structs! :( Will be added soon.
 	    xor	rax,rax
 	    add	rax,55
 	    add	rax,34
-	    push	rax
+	    push rax
 	    add	rsp,8
 
     _ifk35_after:
