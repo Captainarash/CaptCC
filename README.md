@@ -89,70 +89,70 @@ Structs! :( Will be added soon.
     )))))                   
 
 ##### Output:   
-.section	__TEXT,__text,regular,pure_instructions
-.globl	_test
+    .section	__TEXT,__text,regular,pure_instructions
+    .globl	_test
 
-_test:
-push rbp
-mov rbp,rsp
-push rcx
-push rdx
-inc DWORD PTR +8[rsp]
-inc DWORD PTR [rsp]
-add rsp,16
-pop rbp
-xor rax,rax
-ret
+    _test:
+      push rbp
+      mov rbp,rsp
+      push rcx
+      push rdx
+      inc DWORD PTR +8[rsp]
+      inc DWORD PTR [rsp]
+      add rsp,16
+      pop rbp
+      xor rax,rax
+      ret
 
-.globl	_main
+    .globl	_main
 
-_main:
-push rbp
-mov rbp,rsp
-push 1
-push 8
-inc DWORD PTR +8[rsp]
-inc DWORD PTR [rsp]
-xor rax,rax
-sub rax,4
-sub rax,3
-add rax,5
-sub rax,7
-sub rax,8
-add rax,2
-sub rax,32
-push rax
-mov rax,+16[rsp]
-push rax
-mov rcx,1
-mov rdx,2
-call test
-cmp DWORD PTR +24[rsp],2
-jne _ifv2_after
-push 5
-inc DWORD PTR [rsp]
-add rsp,8
+    _main:
+      push rbp
+      mov rbp,rsp
+      push 1
+      push 8
+      inc DWORD PTR +8[rsp]
+      inc DWORD PTR [rsp]
+      xor rax,rax
+      sub rax,4
+      sub rax,3
+      add rax,5
+      sub rax,7
+      sub rax,8
+      add rax,2
+      sub rax,32
+      push rax
+      mov rax,+16[rsp]
+      push rax
+      mov rcx,1
+      mov rdx,2
+      call test
+      cmp DWORD PTR +24[rsp],2
+      jne _ifv2_after
+      push 5
+      inc DWORD PTR [rsp]
+      add rsp,8
 
-_ifv2_after:
-cmp DWORD PTR +8[rsp],35
-jne _ifk35_after
-xor rax,rax
-add rax,55
-add rax,34
-push rax
-add rsp,8
+    _ifv2_after:
+      cmp DWORD PTR +8[rsp],35
+      jne _ifk35_after
+      xor rax,rax
+      add rax,55
+      add rax,34
+      push rax
+      add rsp,8
 
-_ifk35_after:
-add rsp,32
-pop rbp
-mov rax,1
-ret
+    _ifk35_after:
+      add rsp,32
+      pop rbp
+      mov rax,1
+      ret
 
-.section	__DATA,__data
-.globl	_glob
-_glob:
-.long	10
+    .section	__DATA,__data
+    .globl	_glob
+    _glob:
+      .long	10
 
-.globl	_jack
-_jack:
-.long	36
+    .globl	_jack
+    _jack:
+      .long	36
