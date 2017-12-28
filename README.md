@@ -125,10 +125,10 @@ Structs! :( Will be added soon.
 	    add	rsp,8
 
     _ifk35_after:
-    	    add	rsp,32
-    	    pop	rbp
-    	    mov	rax,1
-    	    ret
+	    add	rsp,32
+	    pop	rbp
+	    mov	rax,1
+	    ret
 
 	    .section	__DATA,__data
 	    .globl	_glob
