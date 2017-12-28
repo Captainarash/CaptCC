@@ -52,6 +52,12 @@ function traverser(ast, visitor) {
       case 'Greater':
       case 'LessOrEqual':
       case 'GreaterOrEqual':
+      case 'Dot':
+      case 'XorEqual':
+      case 'OrOr':
+      case 'Pipe':
+      case 'AndAnd':
+      case 'And':
         break;
 
       default:
@@ -202,6 +208,15 @@ function transformer(ast) {
       },
     },
 
+    Colon: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Dot',
+          value: node.value
+        });
+      },
+    },
+
     Less: {
       enter(node, parent) {
         parent._context.push({
@@ -233,6 +248,15 @@ function transformer(ast) {
       enter(node, parent) {
         parent._context.push({
           type: 'LessOrEqual',
+          value: node.value
+        });
+      },
+    },
+
+    XorEqual: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'XorEqual',
           value: node.value
         });
       },
