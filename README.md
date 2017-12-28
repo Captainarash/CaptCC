@@ -77,16 +77,16 @@ Structs! :( Will be added soon.
 	    add	rax,2
 	    sub	rax,32
 	    push	rax
-      mov	rax,+16[rsp]
-      push	rax
-      cmp	DWORD PTR +24[rsp],2
-      jne _ifv2_after
-      push	5
-      inc	DWORD PTR [rsp]
-      add	rsp,8
+            mov	rax,+16[rsp]
+            push	rax
+            cmp	DWORD PTR +24[rsp],2
+            jne _ifv2_after
+            push	5
+            inc	DWORD PTR [rsp]
+            add	rsp,8
 
     _ifv2_after:
-      cmp	DWORD PTR +8[rsp],35
+        cmp	DWORD PTR +8[rsp],35
     	jne _ifk35_after
     	xor	rax,rax
     	add	rax,55
