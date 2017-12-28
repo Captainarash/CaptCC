@@ -271,6 +271,15 @@ function tokenizer(input) {
       continue;
     }
 
+    if (char === '.') {
+      tokens.push({
+        type: 'dot',
+        value: '.'
+      });
+      current++;
+      continue;
+    }
+
     if(char === ',') {
       tokens.push({
         type: 'comma',
