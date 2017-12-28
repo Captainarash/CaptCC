@@ -86,19 +86,19 @@ Structs! :( Will be added soon.
             add	rsp,8
 
     _ifv2_after:
-        cmp	DWORD PTR +8[rsp],35
-    	jne _ifk35_after
-    	xor	rax,rax
-    	add	rax,55
-    	add	rax,34
-    	push	rax
-    	add	rsp,8
+	    cmp	DWORD PTR +8[rsp],35
+	    jne _ifk35_after
+	    xor	rax,rax
+	    add	rax,55
+	    add	rax,34
+	    push	rax
+	    add	rsp,8
 
     _ifk35_after:
-    	add	rsp,32
-    	pop	rbp
-    	mov	rax,1
-    	ret
+    	    add	rsp,32
+    	    pop	rbp
+    	    mov	rax,1
+    	    ret
 
 	    .section	__DATA,__data
 	    .globl	_glob
