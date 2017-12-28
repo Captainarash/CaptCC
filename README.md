@@ -49,7 +49,7 @@ Structs! :( Will be added soon.
 
 ##### Usage in browser console:
 
-    initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; int k = -4 - 3 + 5 - 7 - 8 + 2 - 32; if(v == 2) {int y = 5 ;} return 1;}")))))                
+    initGenerate(processor(transformer(parser(tokenizer("//some stuff here yeaaah \n int glob = 10; int jack = 36; int test(){return 0;} int main(){int v = 1; int f = 8; v++; f++; int k = -4 - 3 + 5 - 7 - 8 + 2 - 32; int e = v; if(v == 2) {int y = 5; y++;} if(k == 35) {int p = 55 + 34;} return 1;}")))))                   
 
 ##### Output:   
 	    .section	__TEXT,__text,regular,pure_instructions
@@ -77,16 +77,28 @@ Structs! :( Will be added soon.
 	    add	rax,2
 	    sub	rax,32
 	    push	rax
-	    cmp	DWORD PTR +16[rsp],2
-	    jne _ifv2_after
-	    push	5
-	    add	rsp,8
+      mov	rax,+16[rsp]
+      push	rax
+      cmp	DWORD PTR +24[rsp],2
+      jne _ifv2_after
+      push	5
+      inc	DWORD PTR [rsp]
+      add	rsp,8
 
     _ifv2_after:
-	    add	rsp,24
-	    pop	rbp
-	    mov	rax,1
-	    ret
+      cmp	DWORD PTR +8[rsp],35
+    	jne _ifk35_after
+    	xor	rax,rax
+    	add	rax,55
+    	add	rax,34
+    	push	rax
+    	add	rsp,8
+
+    _ifk35_after:
+    	add	rsp,32
+    	pop	rbp
+    	mov	rax,1
+    	ret
 
 	    .section	__DATA,__data
 	    .globl	_glob
