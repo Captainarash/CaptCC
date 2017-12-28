@@ -339,7 +339,7 @@ function tokenizer(input) {
     if(LETTERS.test(char)) {
       var value = '';
 
-      while(LETTERS.test(char) || NUMBERS.test(input[current+1]) || input[current+1] === '_') {
+      while(LETTERS.test(char) || NUMBERS.test(char) || char === '_') {
         value += char;
         char = input[++current];
       }
