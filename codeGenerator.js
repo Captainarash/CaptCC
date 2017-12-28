@@ -36,8 +36,8 @@ function generateFunctionAssembly(functionBody) {
 }
 
 function initStack() {
-  var prologue = '\tpush\trbp\n';
-  prologue += '\tmov\trbp,rsp\n';
+  var prologue = '\tpush rbp\n';
+  prologue += '\tmov rbp,rsp\n';
   saveRBP();
   return prologue;
 }
@@ -50,7 +50,7 @@ function saveRBP() {
 }
 
 function restoreRBP() {
-  var epilogue = '\tpop\trbp\n';
+  var epilogue = '\tpop rbp\n';
   stack.pop();
   stack.pop();
   return epilogue;
@@ -131,9 +131,9 @@ function generateReturn(returnValue) {
   var retAsm = '';
     if (returnValue.type === 'NumberLiteral') {
         if (returnValue.value === '0') {
-          retAsm += '\txor\trax,rax\n';
+          retAsm += '\txor rax,rax\n';
         } else {
-          retAsm += '\tmov\trax,' + returnValue.value + '\n';
+          retAsm += '\tmov rax,' + returnValue.value + '\n';
         }
         retAsm += '\tret\n\n';
     }
@@ -147,7 +147,7 @@ function clearStack() {
       counter++;
     }
   }
-  var stackClearanceAsm = '\tadd\trsp,' + (counter * 8).toString() + '\n';
+  var stackClearanceAsm = '\tadd rsp,' + (counter * 8).toString() + '\n';
   while (counter !== 0) {
     stack.pop();
     counter--;
@@ -158,9 +158,9 @@ function clearStack() {
 function generateIncByOne(offset){
     var incAssembly = '';
     if (offset === 0) {
-      incAssembly = '\tinc\tDWORD PTR [rsp]\n';
+      incAssembly = '\tinc DWORD PTR [rsp]\n';
     } else {
-      incAssembly = '\tinc\tDWORD PTR +' + (offset * 8).toString() + '[rsp]\n';
+      incAssembly = '\tinc DWORD PTR +' + (offset * 8).toString() + '[rsp]\n';
     }
     return incAssembly;
 }
@@ -168,9 +168,9 @@ function generateIncByOne(offset){
 function generateIfClause(offset, cmpValue, name) {
   var ifClause = '';
   if (offset === 0) {
-    ifClause += '\tcmp\tDWORD PTR [rsp],' + cmpValue  + '\n';
+    ifClause += '\tcmp DWORD PTR [rsp],' + cmpValue  + '\n';
   } else {
-    ifClause += '\tcmp\tDWORD PTR +' + ((parseInt(offset))*8).toString() + '[rsp],' + cmpValue  + '\n';
+    ifClause += '\tcmp DWORD PTR +' + ((parseInt(offset))*8).toString() + '[rsp],' + cmpValue  + '\n';
   }
   ifClause += '\tjne _if' + name + cmpValue + '_after\n';
   return ifClause;
@@ -195,7 +195,7 @@ function generateIfInside(ifInside, ifName, ifCmpValue) {
       counter++;
       stacklen++;
     }
-    assembledifInside += '\tadd\trsp,' + (counter * 8).toString() + '\n';
+    assembledifInside += '\tadd rsp,' + (counter * 8).toString() + '\n';
   }
   assembledifInside += '\n';
   return assembledifInside;
@@ -251,7 +251,7 @@ function generateVariableAssignment(varType, varName, varValue) {
   assignmentAsm = '';
   if (varValue.type === 'NumberLiteral') {
     if (varType === 'int') {
-      assignmentAsm += '\tpush\t' + varValue.value + '\n';
+      assignmentAsm += '\tpush ' + varValue.value + '\n';
       stack.push({
         type: 'LocalVariable',
         name: varName,
@@ -264,11 +264,11 @@ function generateVariableAssignment(varType, varName, varValue) {
         if (stack[i].type === 'LocalVariable') {
           if (stack[i].name === varValue.value) {
             if (i !== stack.length) {
-              assignmentAsm += '\tmov\trax,+' + (reverseOffset(i) * 8).toString() + '[rsp]\n';
+              assignmentAsm += '\tmov rax,+' + (reverseOffset(i) * 8).toString() + '[rsp]\n';
             } else {
-              assignmentAsm += '\tmov\trax,[rsp]\n';
+              assignmentAsm += '\tmov rax,[rsp]\n';
             }
-            assignmentAsm += '\tpush\trax\n';
+            assignmentAsm += '\tpush rax\n';
             stack.push({
               type: 'LocalVariable',
               name: varName,
@@ -287,7 +287,7 @@ function generateVariableAssignmentWithAddition(statement) {
   var counter = 0;
   var sum = 0;
   var statementAssembly = '';
-  statementAssembly = '\txor\trax,rax\n';
+  statementAssembly = '\txor rax,rax\n';
   while (current < statement.length) {
     if (statement[current].type === 'Equal') {
       var varName = statement[current - 1].value;
@@ -302,18 +302,18 @@ function generateVariableAssignmentWithAddition(statement) {
           if (counter === 0) {
             if (statement[current + 1].type === 'Minus') {
               sum -= parseInt(statement[pmCounter - 1].value);
-              statementAssembly += '\tsub\trax,' + statement[pmCounter - 1].value + '\n';
+              statementAssembly += '\tsub rax,' + statement[pmCounter - 1].value + '\n';
             } else {
               sum += parseInt(statement[pmCounter - 1].value);
-              statementAssembly += '\tadd\trax,' + statement[pmCounter - 1].value + '\n';
+              statementAssembly += '\tadd rax,' + statement[pmCounter - 1].value + '\n';
             }
           }
           if (statement[pmCounter].type === 'Plus') {
             sum += parseInt(statement[current + 1].value);
-            statementAssembly += '\tadd\trax,' + statement[pmCounter + 1].value + '\n';
+            statementAssembly += '\tadd rax,' + statement[pmCounter + 1].value + '\n';
           } else if (statement[pmCounter].type === 'Minus') {
             sum -= parseInt(statement[current + 1].value);
-            statementAssembly += '\tsub\trax,' + statement[pmCounter + 1].value + '\n';
+            statementAssembly += '\tsub rax,' + statement[pmCounter + 1].value + '\n';
           }
           counter++;
         }
@@ -323,7 +323,7 @@ function generateVariableAssignmentWithAddition(statement) {
     current++;
   }
   if (counter !== 0) {
-    statementAssembly += '\tpush\trax\n';
+    statementAssembly += '\tpush rax\n';
     stack.push({
       type: 'LocalVariable',
       name: statement[1].value,
