@@ -90,6 +90,15 @@ function processBody(inside) {
   var tokens = [];
   while (current < inside.length) {
     var part = inside[current];
+    if (part.type === 'CodeCave' && inside[current + 1].type === 'Terminator' && inside[current - 1].type === 'Word') {
+      statements.push({
+        type: 'Call',
+        params: part.arguments,
+        callee: part.callee.name
+      });
+      current++;
+      continue;
+    }
     if (part.type === 'CodeDomain' && inside[current - 1].type === 'CodeCave') {
       if (inside[current - 2].type === 'Word') {
         if (inside[current - 2].value === 'if') {
