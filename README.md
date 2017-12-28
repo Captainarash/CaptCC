@@ -9,10 +9,10 @@ But there was a problem. I didn't know OCaml or Bison or Flex. I wondered why no
 Parts of this project is derived from James Kyle talk at EmberConf 2016 (https://www.youtube.com/watch?v=Tar4WgAfMr4).  
 I appreciate his effort to make this concept fairly easy to understand instead of writing a giant book   
 which no ones's gonna read.    
-He made a Lisp Compiler conveting Lisp syntax to JS.   
+He made a Lisp Compiler converting Lisp syntax to JS.   
 I wanna convert C to ASM.   
 
-###### The parts below are almost complete: 
+###### The parts below are almost complete:
 
 1. tokenizer.js   
 2. parser.js   
@@ -20,7 +20,7 @@ I wanna convert C to ASM.
 4. processor.js   
 
 To be completed:   
-   
+
 5. verifier.js   
 6. codeGenerator.js     
 
@@ -29,7 +29,7 @@ To be completed:
 
 ###### What can be compiled:
 
-* Function Defenitions
+* Function Definitions
 * Integer Variable Assignments
 * Increments (var++)
 * Additions and Subtraction
@@ -54,13 +54,13 @@ Structs! :( Will be added soon.
 ##### Output:   
 	    .section	__TEXT,__text,regular,pure_instructions
 	    .globl	_test
-    
+
     _test:
 	    xor	rax,rax
 	    ret
-    
+
 	    .globl	_main
-    
+
     _main:
 	    push	rbp
 	    mov	rbp,rsp
@@ -81,18 +81,18 @@ Structs! :( Will be added soon.
 	    jne _ifv2_after
 	    push	5
 	    add	rsp,8
-    
+
     _ifv2_after:
 	    add	rsp,24
 	    pop	rbp
 	    mov	rax,1
 	    ret
-    
+
 	    .section	__DATA,__data
 	    .globl	_glob
     _glob:
 	    .long	10
-    
+
 	    .globl	_jack
     _jack:
 	    .long	36   
