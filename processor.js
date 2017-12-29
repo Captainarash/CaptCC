@@ -55,6 +55,7 @@ function processor(ast) {
 // This fucntion will get asBody and return global stuff like global variables, structs
 // (and includes which is not yet added)
 function findGlobalStatements(astBody) {
+
   // first we Clone the astBody to be able to fuck it up :D (Nah, seriously!)
   var astBodyClone = astBody;
 
@@ -91,7 +92,7 @@ function findGlobalStatements(astBody) {
           statement.push(astBodyClone[i]);
         }
       }
-      
+
       // Then we delete the nodes we already went through
       for (var i = 0; i < current + 1; i++) {
         astBodyClone.shift();
@@ -113,8 +114,12 @@ function findGlobalStatements(astBody) {
   return globalStatements;
 }
 
+// this function re-finds our functions and reorganizes them
 function findFuncs(astBody) {
+  // found array will hold our found functions
   var found = [];
+  
+  // looping...
   for (var i = 0; i < astBody.length; i++) {
     if (astBody[i].type === 'Function') {
       if (astBody[i].expression.hasOwnProperty('callee')) {
