@@ -42,11 +42,11 @@ To be completed:
 
 * Every legit character in C syntax
 * Everything is grouped and parsed in a meaningful way
-* Current groupings are "Global Items" and "Functions" (sorry, no includes)
+* Current groupings are "Global Items" and "Functions" and "Structs"(sorry, no includes yet but soon...!)
 
 ###### What's missing from the parser:
 
-Structs! :( Will be added soon.
+Some minor things like includes and typedefs...
 
 ##### Usage in browser console:
 
