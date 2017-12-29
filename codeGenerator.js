@@ -103,13 +103,13 @@ function generateTextHeader() {
 }
 function generateDataSection(globalItems) {
   var globalVariables = findGlobalVariables(globalItems);
-  var dataHeader = generateDataHeader(globalVariables);
+  var dataHeader = generateDataHeader();
   var dataBody = generateDataBody(globalVariables);
   var dataSection = dataHeader + dataBody;
   return dataSection;
 }
 
-function generateDataHeader(globalVariables) {
+function generateDataHeader() {
     var header = '\t.section\t__DATA,__data\n';
     return header;
 }
@@ -135,17 +135,19 @@ function findGlobalVariables(globalItems) {
   }
   var globalStatementsBody = globalItems[current].body;
   for (var i = 0; i < globalStatementsBody.length; i++) {
-    var current = 0;
-    var parts = globalStatementsBody[i];
-    while (current < parts.length - 1) {
-      if (parts[current].type === 'Word' && keywords.indexOf(parts[current].value) === -1 && parts[current + 1].type === 'Equal') {
-        globalVariables.push ({
-          type: parts[current - 1].value,
-          name: parts[current].value,
-          value: parts[current + 2].value
-        });
+    if (globalStatementsBody[i].type === 'Statement') {
+      var current = 0;
+      var parts = globalStatementsBody[i].value;
+      while (current < parts.length - 1) {
+        if (parts[current].type === 'Word' && keywords.indexOf(parts[current].value) === -1 && parts[current + 1].type === 'Equal') {
+          globalVariables.push ({
+            type: parts[current - 1].value,
+            name: parts[current].value,
+            value: parts[current + 2].value
+          });
+        }
+        current++;
       }
-      current++;
     }
   }
   return globalVariables;

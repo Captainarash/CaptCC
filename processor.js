@@ -27,19 +27,33 @@ function processor(ast) {
 function findGlobalStatements(astBody) {
   var astBodyClone = astBody;
   var current = 0;
-  var last = 0;
   var globalStatements = [];
 
   while (current < astBodyClone.length) {
     if (astBodyClone[current].type === 'Terminator') {
       var statement = [];
       for (var i = 0; i < current + 1; i++) {
-        statement.push(astBodyClone[i]);
+        if (astBodyClone[i].value === 'struct') {
+          var instruct = processBody(astBodyClone[i+2].expression.arguments);
+          globalStatements.push({
+            type: 'struct',
+            name: astBodyClone[current+1].value,
+            body: instruct
+          });
+          i += 4;
+        } else {
+          statement.push(astBodyClone[i]);
+        }
       }
       for (var i = 0; i < current + 1; i++) {
         astBodyClone.shift();
       }
-      globalStatements.push(statement);
+      if (statement.length !== 0) {
+        globalStatements.push({
+          type: 'Statement',
+          value: statement
+        });
+      }
       current = 0;
     }
     current++;
@@ -214,12 +228,27 @@ function processBody(inside) {
       } else {
         throw new TypeError('Invalid Syntax!');
       }
+    } else if (part.type === 'CodeDomain' && inside[current - 1].type === 'Word' && inside[current - 2].value === 'struct') {
+      if (inside[current + 1].type === 'Terminator') {
+        var instruct = processBody(part.arguments);
+        statements.push({
+          type: 'struct',
+          name: inside[current - 1].value,
+          body: instruct
+        });
+        current++;
+        continue;
+      }
     }
 
 
     if (part.type === 'Terminator') {
       var phrase = [];
-      if (inside[current-1].type === 'CodeCave' && inside[current-2].value === 'while') {
+      if (inside[current - 1].type === 'CodeCave' && inside[current - 2].value === 'while') {
+        current++;
+        continue
+      }
+      if (inside[current - 1].type === 'CodeDomain' && inside[current - 3].value === 'struct') {
         current++;
         continue
       }
@@ -236,6 +265,15 @@ function processBody(inside) {
           if (inside[start].value === 'else' && inside[start+1].type === 'CodeDomain') {
             start += 2;
             continue;
+          }
+          if (inside[start].value === 'struct') {
+            while (inside[start].type !== 'Terminator') {
+              start++;
+            }
+            if (inside[start].type === 'Terminator') {
+              start++;
+              continue;
+            }
           }
         }
         phrase.push({
