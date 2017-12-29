@@ -1,26 +1,54 @@
+/* After the traversing and transforming the AST to a new AST, we pass the newAST to processor
+ to... guess what? Yes! An even bigger and more organized AST! */
+
 function processor(ast) {
+  /* first we get our ast body and start finding the global stuff.
+  Things like global variables, includes, structs are found here */
   var astBody = ast.body;
+  // This variable globalItems will hold all of iur global stuff.
   var globalItems = [];
+  // We start by looking for them using findGlobalStatements() function
   var globalStatements = findGlobalStatements(astBody);
+  // and we push it into our globalItems array
   globalItems.push({
     type: 'GlobalStatements',
     body: globalStatements
   });
 
+  // Then we define another top level node called fucntionPack.
+  // All the found functions will end up here.
   var functionPack = [];
+
+  // We'll start by finding the functions and reorganize them using findFuncs() function
   var foundFuncs = findFuncs(astBody);
+
+  // The we start our real task which is processing the body of each function
+  // We loop though each found function and call processBody() fucntion on them.
   for (var i = 0; i < foundFuncs.length; i++) {
+    // newBody will hold our organized body of our function
     var newBody = processBody(foundFuncs[i].body);
+
+    // The we'll update our current function.body
     foundFuncs[i].body = newBody;
+
+    //same goes for fucntion arguments :)
     var newFuncArgs = updateFunctionArguments(foundFuncs[i].args);
     foundFuncs[i].args = newFuncArgs;
+
   }
+
+  // Then we push our found function with their updated bodies abd arguments into our
+  // top level functionPack array
   functionPack.push({
     type: 'Functions',
     body: foundFuncs
   });
+  // At the end, we'll define our final abstract syntax tree structure and name it TheBigAST:)
+  // and push our 2 top level arrays: globalItems and functionPack into it.
+  // TheBigAST will then be ready to be compiled
   var TheBigAST = [];
   TheBigAST.push(globalItems,functionPack);
+
   return TheBigAST;
 }
 

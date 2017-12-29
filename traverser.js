@@ -1,3 +1,5 @@
+// We try to traverse each node to create a new AST
+
 function traverser(ast, visitor) {
 
 
