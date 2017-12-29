@@ -52,17 +52,32 @@ function processor(ast) {
   return TheBigAST;
 }
 
+// This fucntion will get asBody and return global stuff like global variables, structs
+// (and includes which is not yet added)
 function findGlobalStatements(astBody) {
+  // first we Clone the astBody to be able to fuck it up :D (Nah, seriously!)
   var astBodyClone = astBody;
+
+  // We start by looping through our astBody and look for Terminator ( ; character)
   var current = 0;
   var globalStatements = [];
 
   while (current < astBodyClone.length) {
+    //If we find a terminator (ehem)
     if (astBodyClone[current].type === 'Terminator') {
+
+      // we create a new array holding our statement
       var statement = [];
+
       for (var i = 0; i < current + 1; i++) {
+
+        // if the first node is a 'struct', we treat it differently
         if (astBodyClone[i].value === 'struct') {
+
+          // in case of an struct, we try to process its body recursively.
           var instruct = processBody(astBodyClone[i+2].expression.arguments);
+
+          // then we push it in our globalStatements array
           globalStatements.push({
             type: 'struct',
             name: astBodyClone[current+1].value,
@@ -70,12 +85,19 @@ function findGlobalStatements(astBody) {
           });
           i += 4;
         } else {
+
+          // if not, we treat it like a normal statement, pushing each node into our
+          // temporary statement array
           statement.push(astBodyClone[i]);
         }
       }
+      
+      // Then we delete the nodes we already went through
       for (var i = 0; i < current + 1; i++) {
         astBodyClone.shift();
       }
+
+      // and push the found statement into globalStatements array
       if (statement.length !== 0) {
         globalStatements.push({
           type: 'Statement',
@@ -86,6 +108,8 @@ function findGlobalStatements(astBody) {
     }
     current++;
   }
+
+  //in the end, we return our globalStatements
   return globalStatements;
 }
 
