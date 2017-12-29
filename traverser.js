@@ -58,6 +58,16 @@ function traverser(ast, visitor) {
       case 'Pipe':
       case 'AndAnd':
       case 'And':
+      case 'Question':
+      case 'Hex':
+      case 'Tab':
+      case 'VTab':
+      case 'Oct':
+      case 'Newline':
+      case 'CRet':
+      case 'Alert':
+      case 'Backspace':
+      case 'QueMark':
         break;
 
       default:
@@ -118,10 +128,127 @@ function transformer(ast) {
       },
     },
 
-    DecByOne: {
+    Arrow: {
       enter(node, parent) {
         parent._context.push({
           type: 'Arrow',
+          value: node.value
+        });
+      },
+    },
+
+    OrOr: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Or',
+          value: node.value
+        });
+      },
+    },
+
+    Pipe: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Pipe',
+          value: node.value
+        });
+      },
+    },
+
+    And: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'And',
+          value: node.value
+        });
+      },
+    },
+
+    AndAnd: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'AndAnd',
+          value: node.value
+        });
+      },
+    },
+
+    Tab: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Tab',
+          value: node.value
+        });
+      },
+    },
+
+    VTab: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'VTab',
+          value: node.value
+        });
+      },
+    },
+
+    Hex: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Hex',
+          value: node.value
+        });
+      },
+    },
+
+    Oct: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Oct',
+          value: node.value
+        });
+      },
+    },
+
+    Newline: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Newline',
+          value: node.value
+        });
+      },
+    },
+
+    CRet: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'CRet',
+          value: node.value
+        });
+      },
+    },
+
+    Alert: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Alert',
+          value: node.value
+        });
+      },
+    },
+
+    Backspace: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Backspace',
+          value: node.value
+        });
+      },
+    },
+
+    QueMark: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'QueMark',
           value: node.value
         });
       },
@@ -208,10 +335,19 @@ function transformer(ast) {
       },
     },
 
-    Colon: {
+    Dot: {
       enter(node, parent) {
         parent._context.push({
           type: 'Dot',
+          value: node.value
+        });
+      },
+    },
+
+    Question: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'Question',
           value: node.value
         });
       },

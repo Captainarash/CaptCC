@@ -115,6 +115,14 @@ function parser(tokens) {
         };
     }
 
+    if (token.type === 'question') {
+        current++;
+        return {
+          type: 'Question',
+          value: token.value
+        };
+    }
+
     if (token.type === 'less') {
       if(tokens[++current].type === 'equal') {
       current++;
@@ -180,7 +188,7 @@ function parser(tokens) {
       current++;
         return {
           type: 'XorEqual',
-          value: "^="
+          value: '^='
         };
       } else {
         return {
@@ -204,6 +212,83 @@ function parser(tokens) {
         type: 'Colon',
         value: token.value
       };
+    }
+
+    if (token.type === 'backslash') {
+      token = tokens[++current];
+      if (token.type === 'name') {
+        if (token.value === 't') {
+          current++;
+          return {
+            type: 'Tab',
+            value: /\t/
+          };
+        }
+
+        if (token.value === 'n') {
+          current++;
+          return {
+            type: 'Newline',
+            value: /\n/
+          };
+        }
+
+        if (token.value === 'r') {
+          current++;
+          return {
+            type: 'CRet',
+            value: /\r/
+          };
+        }
+
+        if (token.value === 'b') {
+          current++;
+          return {
+            type: 'Backspace',
+            value: /\b/
+          };
+        }
+
+        if (token.value === 'a') {
+          current++;
+          return {
+            type: 'Alert',
+            value: /\a/
+          };
+        }
+
+        if (token.value === 'v') {
+          current++;
+          return {
+            type: 'VTab',
+            value: /\v/
+          };
+        }
+
+        if (token.value === 'x') {
+          current++;
+          return {
+            type: 'Hex',
+            value: /\x/
+          };
+        }
+
+        if (token.value === 'o') {
+          current++;
+          return {
+            type: 'Oct',
+            value: /\o/
+          };
+        }
+      }
+
+      if (token.type === 'question') {
+        current++;
+        return {
+          type: 'QueMark',
+          value: /\?/
+        };
+      }
     }
 
     /* here we perform some recursive acrobatics. If we encounter an opening bracket, we create a
