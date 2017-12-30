@@ -31,6 +31,7 @@ To be completed:
 
 * Function Definitions
 * Integer Variable Assignments
+* Char variable Assignments (i.e. char my_name[] = "Arash")
 * Increments (var++)
 * Additions and Subtraction
 * Global Variables
@@ -58,10 +59,12 @@ Some minor things like includes and typedefs...
     int test(int a, int b){
         a++;
         b++;
+        char my_name[] = \"Arash\";
         return 0;
     }
 
     int main(){
+        char greet[] = \"hello\n\";
         int v = 1;
         int f = 8;
 
@@ -156,3 +159,10 @@ Some minor things like includes and typedefs...
     .globl	_jack
     _jack:
       .long	36
+
+    .section	__TEXT,__cstring,cstring_literals
+    L_test_my_name:
+    	.ascii	"arash"
+
+    L_main_greet:
+    	.ascii	"hello\n"
