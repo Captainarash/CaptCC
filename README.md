@@ -92,66 +92,66 @@ Some minor things like includes and typedefs...
     )))))                   
 
 ##### Output:   
-    .section	__TEXT,__text,regular,pure_instructions
+    .text
     .globl	_test
 
     _test:
-      push rbp
-      mov rbp,rsp
-      push rcx
-      push rdx
-      inc DWORD PTR +8[rsp]
-      inc DWORD PTR [rsp]
-      add rsp,16
-      pop rbp
-      xor rax,rax
+      push %rbp
+      mov %rsp,%rbp
+      push %rcx
+      push %rdx
+      incl 8(%rsp)
+      incl (%rsp)
+      add $16,%rsp
+      pop %rbp
+      xor %rax,%rax
       ret
 
-    .globl	_main
+    .globl	main
 
-    _main:
-      push rbp
-      mov rbp,rsp
-      push 1
-      push 8
-      inc DWORD PTR +8[rsp]
-      inc DWORD PTR [rsp]
-      xor rax,rax
-      sub rax,4
-      sub rax,3
-      add rax,5
-      sub rax,7
-      sub rax,8
-      add rax,2
-      sub rax,32
-      push rax
-      mov rax,+16[rsp]
-      push rax
-      mov rcx,1
-      mov rdx,2
-      call test
-      cmp DWORD PTR +24[rsp],2
+    main:
+      push %rbp
+      mov %rsp,%rbp
+      push $1
+      push $8
+      incl 8(%rsp)
+      incl (%rsp)
+      xor %rax,%rax
+      sub $4,%rax
+      sub $3,%rax
+      add $5,%rax
+      sub $7,%rax
+      sub $8,%rax
+      add $2,%rax
+      sub $32,%rax
+      push %rax
+      mov 16(%rsp),%rax
+      push %rax
+      mov $1,%rcx
+      mov $2,%rdx
+      call _test
+      cmp $2,24(%rsp)
       jne _ifv2_after
-      push 5
-      inc DWORD PTR [rsp]
-      add rsp,8
+      push $5
+      incl (%rsp)
+      add $8,%rsp
 
     _ifv2_after:
-      cmp DWORD PTR +8[rsp],35
+      cmp $35,8(%rsp)
       jne _ifk35_after
-      xor rax,rax
-      add rax,55
-      add rax,34
-      push rax
-      add rsp,8
+      xor %rax,%rax
+      add $55,%rax
+      add $34,%rax
+      push %rax
+      add $8,%rsp
 
     _ifk35_after:
-      add rsp,32
-      pop rbp
-      mov rax,1
+      add $32,%rsp
+      pop %rbp
+      mov $1,%rax
       ret
 
-    .section	__DATA,__data
+    .data
     .globl	_glob
     _glob:
       .long	10
@@ -160,9 +160,9 @@ Some minor things like includes and typedefs...
     _jack:
       .long	36
 
-    .section	__TEXT,__cstring,cstring_literals
+
     L_test_my_name:
-    	.ascii	"arash"
+      .ascii	"arash"
 
     L_main_greet:
-    	.ascii	"hello\n"
+      .ascii	"hello\n"

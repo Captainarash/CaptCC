@@ -8,7 +8,7 @@ function initGenerate(TheBigAST) {
   var globalItems = TheBigAST[0];
   var functionBox = TheBigAST[1];
   allFuncs = findAllFuncs(functionBox[0].body);
-  strLiteralSection = generateStrLiteralSection();
+  //strLiteralSection = generateStrLiteralSection();
   var funcsAsm = findFunctionNames(functionBox[0].body);
   var dataSection = generateDataSection(globalItems);
   var textHeader = generateTextHeader(TheBigAST[1]);
@@ -43,7 +43,7 @@ function generateFunctionAssembly(functionBody, functionArgs) {
     var regIndex = 0
     for (var i = 0; i < functionArgs.length; i++) {
       if (functionArgs[i].type === 'int') {
-        functionAssembly += '\tpush ' + volatileRegs[regIndex] + '\n';
+        functionAssembly += '\tpush %' + volatileRegs[regIndex] + '\n';
         stack.push({
           type: 'LocalVariable',
           name: functionArgs[i].name,
@@ -78,8 +78,8 @@ function generateStrLiteralSection() {
 }
 
 function initStack() {
-  var prologue = '\tpush rbp\n';
-  prologue += '\tmov rbp,rsp\n';
+  var prologue = '\tpush %rbp\n';
+  prologue += '\tmov %rsp,%rbp\n';
   saveRBP();
   return prologue;
 }
@@ -92,7 +92,7 @@ function saveRBP() {
 }
 
 function restoreRBP() {
-  var epilogue = '\tpop rbp\n';
+  var epilogue = '\tpop %rbp\n';
   stack.pop();
   stack.pop();
   return epilogue;
@@ -102,15 +102,21 @@ function findFunctionNames(functionPack) {
   var funcsAsm = '';
   for (var i = 0; i < functionPack.length; i++) {
     currentFunc = functionPack[i].name;
-    funcsAsm += '\t.globl	_' + functionPack[i].name +'\n\n';
-    funcsAsm += '_' + functionPack[i].name + ':\n';
+    if (functionPack[i].name === 'main') {
+      funcsAsm += '\t.globl	main\n\n';
+      funcsAsm += 'main:\n';
+    } else {
+      funcsAsm += '\t.globl	_' + functionPack[i].name +'\n\n';
+      funcsAsm += '_' + functionPack[i].name + ':\n';
+    }
+
     funcsAsm += generateFunctionAssembly(functionPack[i].body, functionPack[i].args);
   }
   return funcsAsm;
 }
 
 function generateTextHeader() {
-  var header = '\t.section\t__TEXT,__text,regular,pure_instructions\n';
+  var header = '\t.text\n';
   return header;
 }
 function generateDataSection(globalItems) {
@@ -122,7 +128,7 @@ function generateDataSection(globalItems) {
 }
 
 function generateDataHeader() {
-    var header = '\t.section\t__DATA,__data\n';
+    var header = '\t.data\n';
     return header;
 }
 function generateDataBody(globalVariables) {
@@ -174,9 +180,9 @@ function generateReturn(returnValue) {
   var retAsm = '';
     if (returnValue.type === 'NumberLiteral') {
         if (returnValue.value === '0') {
-          retAsm += '\txor rax,rax\n';
+          retAsm += '\txor %rax,%rax\n';
         } else {
-          retAsm += '\tmov rax,' + returnValue.value + '\n';
+          retAsm += '\tmov $' + returnValue.value + ',%rax\n';
         }
         retAsm += '\tret\n\n';
     }
@@ -190,7 +196,7 @@ function clearStack() {
       counter++;
     }
   }
-  var stackClearanceAsm = '\tadd rsp,' + (counter * 8).toString() + '\n';
+  var stackClearanceAsm = '\tadd $' + (counter * 8).toString() + ',%rsp\n';
   while (counter !== 0) {
     stack.pop();
     counter--;
@@ -201,9 +207,9 @@ function clearStack() {
 function generateIncByOne(offset){
     var incAssembly = '';
     if (offset === 0) {
-      incAssembly = '\tinc DWORD PTR [rsp]\n';
+      incAssembly = '\tincl (%rsp)\n';
     } else {
-      incAssembly = '\tinc DWORD PTR +' + (offset * 8).toString() + '[rsp]\n';
+      incAssembly = '\tincl ' + (offset * 8).toString() + '(%rsp)\n';
     }
     return incAssembly;
 }
@@ -211,9 +217,9 @@ function generateIncByOne(offset){
 function generateIfClause(offset, cmpValue, name) {
   var ifClause = '';
   if (offset === 0) {
-    ifClause += '\tcmp DWORD PTR [rsp],' + cmpValue  + '\n';
+    ifClause += '\tcmp $' + cmpValue  + ',(%rsp)\n';
   } else {
-    ifClause += '\tcmp DWORD PTR +' + ((parseInt(offset))*8).toString() + '[rsp],' + cmpValue  + '\n';
+    ifClause += '\tcmp $' + cmpValue  + ',' + ((parseInt(offset))*8).toString() + '(%rsp)\n';
   }
   ifClause += '\tjne _if' + name + cmpValue + '_after\n';
   return ifClause;
@@ -238,7 +244,7 @@ function generateIfInside(ifInside, ifName, ifCmpValue) {
       counter++;
       stacklen++;
     }
-    assembledifInside += '\tadd rsp,' + (counter * 8).toString() + '\n';
+    assembledifInside += '\tadd $' + (counter * 8).toString() + ',%rsp\n';
   }
   assembledifInside += '\n';
   return assembledifInside;
@@ -307,14 +313,14 @@ function generateCall(part) {
         current++;
         continue;
       } else if (params[current].type === 'NumberLiteral') {
-        callAsm += '\tmov ' + volatileRegs[regIndex] + ',' + params[current].value + '\n';
+        callAsm += '\tmov $' + params[current].value + ',%' + volatileRegs[regIndex] + '\n';
         regIndex++;
         current++;
         continue;
       }
       current++;
     }
-    callAsm += '\tcall ' + part.callee + '\n';
+    callAsm += '\tcall _' + part.callee + '\n';
   }
   return callAsm;
 }
@@ -350,7 +356,7 @@ function generateVariableAssignment(varType, varName, varValue) {
   assignmentAsm = '';
   if (varValue.type === 'NumberLiteral') {
     if (varType === 'int') {
-      assignmentAsm += '\tpush ' + varValue.value + '\n';
+      assignmentAsm += '\tpush $' + varValue.value + '\n';
       stack.push({
         type: 'LocalVariable',
         name: varName,
@@ -363,11 +369,11 @@ function generateVariableAssignment(varType, varName, varValue) {
         if (stack[i].type === 'LocalVariable') {
           if (stack[i].name === varValue.value) {
             if (i !== stack.length) {
-              assignmentAsm += '\tmov rax,+' + (reverseOffset(i) * 8).toString() + '[rsp]\n';
+              assignmentAsm += '\tmov '+ (reverseOffset(i) * 8).toString() + '(%rsp)' + ',%rax\n';
             } else {
-              assignmentAsm += '\tmov rax,[rsp]\n';
+              assignmentAsm += '\tmov (%rsp),%rax\n';
             }
-            assignmentAsm += '\tpush rax\n';
+            assignmentAsm += '\tpush %rax\n';
             stack.push({
               type: 'LocalVariable',
               name: varName,
@@ -386,7 +392,7 @@ function generateVariableAssignmentWithAddition(statement) {
   var counter = 0;
   var sum = 0;
   var statementAssembly = '';
-  statementAssembly = '\txor rax,rax\n';
+  statementAssembly = '\txor %rax,%rax\n';
   while (current < statement.length) {
     if (statement[current].type === 'Equal') {
       var varName = statement[current - 1].value;
@@ -401,18 +407,18 @@ function generateVariableAssignmentWithAddition(statement) {
           if (counter === 0) {
             if (statement[current + 1].type === 'Minus') {
               sum -= parseInt(statement[pmCounter - 1].value);
-              statementAssembly += '\tsub rax,' + statement[pmCounter - 1].value + '\n';
+              statementAssembly += '\tsub $' + statement[pmCounter - 1].value + ',%rax\n';
             } else {
               sum += parseInt(statement[pmCounter - 1].value);
-              statementAssembly += '\tadd rax,' + statement[pmCounter - 1].value + '\n';
+              statementAssembly += '\tadd $' + statement[pmCounter - 1].value + ',%rax\n';
             }
           }
           if (statement[pmCounter].type === 'Plus') {
             sum += parseInt(statement[current + 1].value);
-            statementAssembly += '\tadd rax,' + statement[pmCounter + 1].value + '\n';
+            statementAssembly += '\tadd $' + statement[pmCounter + 1].value + ',%rax\n';
           } else if (statement[pmCounter].type === 'Minus') {
             sum -= parseInt(statement[current + 1].value);
-            statementAssembly += '\tsub rax,' + statement[pmCounter + 1].value + '\n';
+            statementAssembly += '\tsub $' + statement[pmCounter + 1].value + ',%rax\n';
           }
           counter++;
         }
@@ -422,7 +428,7 @@ function generateVariableAssignmentWithAddition(statement) {
     current++;
   }
   if (counter !== 0) {
-    statementAssembly += '\tpush rax\n';
+    statementAssembly += '\tpush %rax\n';
     stack.push({
       type: 'LocalVariable',
       name: statement[1].value,
