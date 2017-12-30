@@ -9,7 +9,6 @@ function initGenerate(TheBigAST) {
   var functionBox = TheBigAST[1];
   allFuncs = findAllFuncs(functionBox[0].body);
   strLiteralSection = generateStrLiteralSection();
-  console.log(strLiteralSection.length);
   var funcsAsm = findFunctionNames(functionBox[0].body);
   var dataSection = generateDataSection(globalItems);
   var textHeader = generateTextHeader(TheBigAST[1]);
