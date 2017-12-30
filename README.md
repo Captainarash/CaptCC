@@ -170,7 +170,10 @@ Some minor things like includes and typedefs...
 
 ##### To test the compiler code:
 
-1. Copy the output into a file, let's say compiler_test.s
-2. generate the binary using GCC
-    gcc compiler_test.s -o compiler_test
-3. Run the binary
+1. Copy the output into a file, let's say compiler_test.s  
+2. generate the binary using GCC  
+
+        gcc compiler_test.s -o compiler_test  
+
+
+3. Run the binary  
