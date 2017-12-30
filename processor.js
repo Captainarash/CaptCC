@@ -196,7 +196,8 @@ function processBody(inside) {
       current++;
       continue;
     }
-    
+    // the rest of the code is self-explanatory...
+    // next we look for () followd by {} which may be if, for, while,...
     if (part.type === 'CodeDomain' && inside[current - 1].type === 'CodeCave') {
       if (inside[current - 2].type === 'Word') {
         if (inside[current - 2].value === 'if') {
@@ -312,7 +313,10 @@ function processBody(inside) {
       } else {
         throw new TypeError('Invalid Syntax!');
       }
-    } else if (part.type === 'CodeDomain' && inside[current - 1].type === 'Word' && inside[current - 2].value === 'struct') {
+    }
+
+    // here we check for structs...
+    else if (part.type === 'CodeDomain' && inside[current - 1].type === 'Word' && inside[current - 2].value === 'struct') {
       if (inside[current + 1].type === 'Terminator') {
         var instruct = processBody(part.arguments);
         statements.push({
@@ -350,16 +354,19 @@ function processBody(inside) {
             start += 2;
             continue;
           }
+          // since structs can have bunch of words right after their declaration
+          // we loop until we find the terminator
           if (inside[start].value === 'struct') {
             while (inside[start].type !== 'Terminator') {
               start++;
             }
             if (inside[start].type === 'Terminator') {
               start++;
-              continue;
+              break;
             }
           }
         }
+        
         phrase.push({
           type: inside[start].type,
           value: inside[start].value
