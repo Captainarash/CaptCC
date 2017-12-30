@@ -172,13 +172,22 @@ function findFuncs(astBody) {
 
 // This function processes the body of every codeDomain and it's the code of our processing stage
 function processBody(inside) {
+  // this variable holds our statements.
+  // the name statements is not literal. It will group and hold whatever is inside a CodeDoamin
   var statements = [];
+
+  // current variable is used to loop through the body
   var current = 0;
+
   var start = 0;
-  var tokens = [];
+
   while (current < inside.length) {
     var part = inside[current];
+
+    // If the current node is a CodeCave (paranthesis) and after it there is a terminator (;)
+    // and before it there is a word then this is a fucntion call.
     if (part.type === 'CodeCave' && inside[current + 1].type === 'Terminator' && inside[current - 1].type === 'Word') {
+      // We push our function call inot our statement
       statements.push({
         type: 'Call',
         params: part.arguments,
@@ -187,6 +196,7 @@ function processBody(inside) {
       current++;
       continue;
     }
+    
     if (part.type === 'CodeDomain' && inside[current - 1].type === 'CodeCave') {
       if (inside[current - 2].type === 'Word') {
         if (inside[current - 2].value === 'if') {
