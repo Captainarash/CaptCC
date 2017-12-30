@@ -1,15 +1,24 @@
 var stack = [];
 var allFuncs = [];
 var volatileRegs = ['rcx','rdx','r8','r9'];
+var strLiteralSection = '';
+var currentFunc = '';
+
 function initGenerate(TheBigAST) {
   var globalItems = TheBigAST[0];
   var functionBox = TheBigAST[1];
   allFuncs = findAllFuncs(functionBox[0].body);
+  strLiteralSection = generateStrLiteralSection();
+  console.log(strLiteralSection.length);
   var funcsAsm = findFunctionNames(functionBox[0].body);
   var dataSection = generateDataSection(globalItems);
   var textHeader = generateTextHeader(TheBigAST[1]);
-
-  var compiled = textHeader + funcsAsm + dataSection;
+  var compiled = '';
+  if (strLiteralSection.length === 44) {
+    compiled = textHeader + funcsAsm + dataSection;
+  } else {
+    compiled = textHeader + funcsAsm + dataSection + strLiteralSection;
+  }
   console.log(compiled);
   return 0;
 }
@@ -64,6 +73,11 @@ function generateFunctionAssembly(functionBody, functionArgs) {
   return functionAssembly;
 }
 
+function generateStrLiteralSection() {
+  var strLiteralSection = '\t.section\t__TEXT,__cstring,cstring_literals\n';
+  return strLiteralSection;
+}
+
 function initStack() {
   var prologue = '\tpush rbp\n';
   prologue += '\tmov rbp,rsp\n';
@@ -86,10 +100,9 @@ function restoreRBP() {
 }
 
 function findFunctionNames(functionPack) {
-  var functionNames = [];
   var funcsAsm = '';
   for (var i = 0; i < functionPack.length; i++) {
-    functionNames.push(functionPack[i].name);
+    currentFunc = functionPack[i].name;
     funcsAsm += '\t.globl	_' + functionPack[i].name +'\n\n';
     funcsAsm += '_' + functionPack[i].name + ':\n';
     funcsAsm += generateFunctionAssembly(functionPack[i].body, functionPack[i].args);
@@ -238,12 +251,19 @@ function checkForStatements(part) {
     if (part[0].value === 'return') {
       functionAssembly += generateReturn(part[1]);
     }
+
     if (part[0].value === 'int') {
         if (part.length === 5) {
           functionAssembly += generateVariableAssignment(part[0].value, part[1].value, part[3]);
         } else if (part.length > 5) {
           functionAssembly += generateVariableAssignmentWithAddition(part);
         }
+    }
+
+    if (part[0].value === 'char') {
+      if (part.length === 6) {
+        generateStringVariable(part);
+      }
     }
   } else if (part[0].type === 'Word' && keywords.indexOf(part[0].value) === -1) {
       for (var i = 0; i < stack.length; i++) {
@@ -299,6 +319,34 @@ function generateCall(part) {
   }
   return callAsm;
 }
+
+function generateStringVariable(part) {
+  if (part[1].type === 'Word' && part[2].type === 'Arr') {
+    for (var i = 0; i < stack.length; i++) {
+      if (stack[i].type === 'LocalVariable') {
+        if (stack[i].name === part[1].value) {
+          throw new TypeError('Varibale already defined: ' + part[1].value);
+        }
+      }
+    }
+    var theCharArray = part[2].value
+    if (theCharArray.length === 0) {
+      if (part[4].type === 'StringLiteral') {
+        strLiteralSection += '\nL_' + currentFunc + '_' + part[1].value + ':\n';
+        strLiteralSection += '\t.ascii\t\"' + escapeThis(part[4].value) + '\"\n';
+      }
+    }
+  }
+}
+
+function escapeThis(strLiteral) {
+  var escaped = '';
+  escaped = strLiteral.replace(/\n/g, '\\n');
+  escaped = escaped.replace(/\r/g, '\\r');
+  escaped = escaped.replace(/\t/g, '\\t');
+  return escaped;
+}
+
 function generateVariableAssignment(varType, varName, varValue) {
   assignmentAsm = '';
   if (varValue.type === 'NumberLiteral') {
