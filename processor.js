@@ -118,16 +118,27 @@ function findGlobalStatements(astBody) {
 function findFuncs(astBody) {
   // found array will hold our found functions
   var found = [];
-  
+
   // looping...
   for (var i = 0; i < astBody.length; i++) {
+
+    //if the current node type is a function..
     if (astBody[i].type === 'Function') {
+
+      // here we check if the node has a property of 'callee'
+      // because a codeCave node can also be just some parenthesis for other purposes
       if (astBody[i].expression.hasOwnProperty('callee')) {
+
+        // Then we do furthur varification and sanity checks to make sure this is a function definition
         if(astBody[i].expression.callee.type ==='Identifier') {
           if (astBody[i-1].type === 'Word' && astBody[i-2].type === 'Word') {
             if (astBody[i+1].type === 'Function'){
               if (astBody[i+1].expression.type === 'CodeDomain') {
+
+                // If the current function is 'main'
                 if (astBody[i].expression.callee.name ==='main') {
+
+                  // we push it to found[] array but we'll name its type EntryPoint
                   found.push({
                     type: 'EntryPoint',
                     name: astBody[i].expression.callee.name,
@@ -135,7 +146,10 @@ function findFuncs(astBody) {
                     args: astBody[i].expression.arguments,
                     body: astBody[i+1].expression.arguments
                   });
-                } else {
+                }
+
+                // if not, we name its type 'FunctionDefinition'
+                else {
                   found.push({
                     type: 'FunctionDefinition',
                     name: astBody[i].expression.callee.name,
@@ -151,9 +165,12 @@ function findFuncs(astBody) {
       }
     }
   }
+
+  // In the end we return found[] array which holds our fucntions
   return found;
 }
 
+// This function processes the body of every codeDomain and it's the code of our processing stage
 function processBody(inside) {
   var statements = [];
   var current = 0;
