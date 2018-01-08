@@ -12,12 +12,7 @@ function initGenerate(TheBigAST) {
   var funcsAsm = findFunctionNames(functionBox[0].body);
   var dataSection = generateDataSection(globalItems);
   var textHeader = generateTextHeader(TheBigAST[1]);
-  var compiled = '';
-  if (strLiteralSection.length === 44) {
-    compiled = textHeader + funcsAsm + dataSection;
-  } else {
-    compiled = textHeader + funcsAsm + dataSection + strLiteralSection;
-  }
+  var compiled = textHeader + funcsAsm + dataSection;
   console.log(compiled);
   return 0;
 }
