@@ -47,7 +47,7 @@ function traverser(ast, visitor) {
       case 'DecByNum':
       case 'ComparisonE':
       case 'ComparisonN':
-      case 'Include':
+      case 'Macro':
       case 'Not':
       case 'Colon':
       case 'Less':
@@ -310,10 +310,10 @@ function transformer(ast) {
       },
     },
 
-    Include: {
+    Macro: {
       enter(node, parent) {
         parent._context.push({
-          type: 'Include',
+          type: 'Macro',
           value: node.value
         });
       },
