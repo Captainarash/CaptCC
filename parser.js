@@ -35,7 +35,7 @@ function parser(tokens) {
     if (token.type === 'hash') {
       current++;
       return {
-        type: 'Include',
+        type: 'Macro',
         value: token.value
       };
     }
