@@ -43,11 +43,12 @@ To be completed:
 
 * Every legit character in C syntax
 * Everything is grouped and parsed in a meaningful way
-* Current groupings are "Global Items" and "Functions" and "Structs"(sorry, no includes yet but soon...!)
+* Current groupings are "GlobalStatements" and "Functions".
+* Inside GlobalStatements, there are Macros (Only #include for now :p), global varibales and structs.
 
 ###### What's missing from the parser:
 
-Some minor things like includes and typedefs...
+typedef, define, ...
 
 ##### Usage in browser console:
 
