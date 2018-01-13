@@ -9,6 +9,10 @@ function processor(ast) {
   var globalItems = [];
   // We start by looking for them using findGlobalStatements() function
   var globalStatements = findGlobalStatements(astBody);
+  // Here we try to prerpocess out globalStatements to reorder our macro structure
+  // This step is beutifies the macro structure in the final AST which means
+  // easier to compile in the next step
+  globalStatements = preprocessor(globalStatements);
   // and we push it into our globalItems array
   globalItems.push({
     type: 'GlobalStatements',
@@ -64,6 +68,36 @@ function findGlobalStatements(astBody) {
   var globalStatements = [];
 
   while (current < astBodyClone.length) {
+    //checking for macros
+    if (astBodyClone[0].type === 'Macro') {
+      var statement = [];
+      if (astBodyClone[1].value === 'include') {
+        var macro = [];
+        var macroCounter = 0;
+        if (astBodyClone[2].type === 'StringLiteral') {
+          macro.push(astBodyClone[0]);
+          macro.push(astBodyClone[1]);
+          macro.push(astBodyClone[2]);
+          for (var i = 0; i < 3; i++) {
+            astBodyClone.shift();
+          }
+        } else {
+          while ( astBodyClone[macroCounter].type !== 'Greater') {
+            macro.push(astBodyClone[macroCounter]);
+            macroCounter++;
+          }
+          macro.push(astBodyClone[macroCounter]);
+          for (var i = 0; i < macroCounter + 1; i++) {
+            astBodyClone.shift();
+          }
+        }
+        globalStatements.push({
+          type: 'Macro',
+          value: macro
+        });
+        current = 0;
+      }
+    }
     //If we find a terminator (ehem)
     if (astBodyClone[current].type === 'Terminator') {
 
@@ -366,7 +400,7 @@ function processBody(inside) {
             }
           }
         }
-        
+
         phrase.push({
           type: inside[start].type,
           value: inside[start].value
@@ -429,4 +463,49 @@ function updateFunctionArguments(cave) {
     current++;
   }
   return params;
+}
+
+
+function preprocessor(GlobalStatements) {
+  var current = 0;
+  while (current < GlobalStatements.length) {
+    if (GlobalStatements[current].type === 'Macro') {
+      var macro = GlobalStatements[current].value;
+      if (macro[1].type === 'Word') {
+        if (macro[1].value === 'include') {
+          var counter = 0;
+          var includedFile = "";
+          while (counter < macro.length) {
+            if (macro[counter].type === 'Less') {
+              counter++;
+              while (counter < macro.length && macro[counter].type !== 'Greater') {
+                includedFile += macro[counter].value;
+                counter++;
+              }
+            }
+            if (macro[counter].type === 'StringLiteral') {
+              includedFile += macro[counter].value;
+            }
+            counter++;
+          }
+          GlobalStatements[current] = {
+            type: 'Macro',
+            subtype: 'include',
+            file: includedFile
+          }
+        }
+        if (macro[1].value === 'define') {
+          console.log('define macro not yet supported :(');
+        }
+        if (macro[1].value === 'ifndef') {
+          console.log('define macro not yet supported :(');
+        }
+        if (macro[1].value === 'ifdef') {
+          console.log('define macro not yet supported :(');
+        }
+      }
+    }
+    current++;
+  }
+  return GlobalStatements;
 }
