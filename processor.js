@@ -503,6 +503,9 @@ function preprocessor(GlobalStatements) {
         if (macro[1].value === 'ifdef') {
           console.log('define macro not yet supported :(');
         }
+        if (macro[1].value === 'pragma') {
+          console.log('pragma macro not yet supported :(');
+        }
       }
     }
     current++;

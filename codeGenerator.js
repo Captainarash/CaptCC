@@ -1,8 +1,17 @@
 var stack = [];
 var allFuncs = [];
-var volatileRegs = ['rcx','rdx','r8','r9'];
+var volatileRegs = ['rcx','rdx','r8','r9']; // this is for Win64-FastCall Calling Convention
 var strLiteralSection = '';
 var currentFunc = '';
+// List of additional settings coming in the future:
+// setting the mnemonic: AT&T or Intel
+// var mnemonic = 'AT&T';
+// setting the syntax: GCC-OSX, GCC-Linux, MASM, NASM, etc.
+// var syntax = 'GCC-OSX'
+// setting the calling convention: Win64-FastCall, Linux-FastCall, CDECL, etc.
+// var calling_convention = 'Win64-FastCall';
+// setting the mode: 16, 32, 64.
+// var mode = 64.
 
 function initGenerate(TheBigAST) {
   var globalItems = TheBigAST[0];
@@ -10,6 +19,7 @@ function initGenerate(TheBigAST) {
   allFuncs = findAllFuncs(functionBox[0].body);
   //strLiteralSection = generateStrLiteralSection();
   var funcsAsm = findFunctionNames(functionBox[0].body);
+  var headers = includeHeaders(globalItems);
   var dataSection = generateDataSection(globalItems);
   var textHeader = generateTextHeader(TheBigAST[1]);
   var compiled = textHeader + funcsAsm + dataSection;
@@ -432,4 +442,20 @@ function generateVariableAssignmentWithAddition(statement) {
     return statementAssembly;
   }
   return 'Error!';
+}
+
+function includeHeaders(globalItems) {
+  var includes = [];
+  var current = 0;
+  var globalStatements = globalItems[0];
+  while (current < globalStatements.length) {
+    if (globalStatements[current].type === 'Macro') {
+      if (globalStatements[current].subtype === 'include') {
+        console.log('In the near future, included flies from the C standard library will be added!');
+        console.log('But we first need to fully compile every valid C syntax!');
+      }
+    }
+    current++;
+  }
+  return includes;
 }
