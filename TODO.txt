@@ -1,0 +1,14 @@
+TODO:
+
+tokenizer & parser:
+
+  Issue 1: Tokenizer needs a full audit and fuzzing test to ensure its reliability.
+
+
+code generator:
+  Issue 1: The compiler treats int as 8-byte values. This must be reduced to
+          4 bytes and also the register size must shrink in half
+          (e.g. rax -> eax) when using int.
+
+  Issue 2: we need to add the support for adding 2 integer variables and saving
+            the result in a third variable; both at initializing time and reassignment.
