@@ -82,32 +82,6 @@ function tokenizer(input) {
       continue;
     }
 
-    /* When we are looking for an underline, we need to remember that an underline may be
-    the beginning of a name (any name, variable, function, struct, etc.)
-    So we have to check if the next character is alphanumeric or again underline; So we
-    group them together as 1 token. If the underline is there alone [:()], then we just
-    push it as is and continue our loop*/
-    if (char === '_') {
-      if (LETTERS.test(input[current+1]) || NUMBERS.test(input[current+1]) || input[current+1] === '_') {
-        char = input[++current];
-        var value = '_';
-        while(LETTERS.test(char) || NUMBERS.test(char) || input[current+1] === '_') {
-          value += char;
-          char = input[++current];
-        }
-        tokens.push({
-          type: 'name',
-          value: value
-        });
-        continue;
-      } else {
-        tokens.push({
-          type: 'name',
-          value: '_'
-        });
-      }
-    }
-
     if (char === '+') {
       tokens.push({
         type: 'plus',
@@ -344,12 +318,12 @@ function tokenizer(input) {
     }
 
     /* while checking for LETTERS, we also check for NUMBERS and UNDERLINE
-    (i.e. imagine the input as s0m3_c00l_n4m3) */
-    if(LETTERS.test(char)) {
+    (i.e. imagine the input as s0m3_c00l_n4m3) or __my_joke_salary */
+    if(LETTERS.test(char) || char === '_') {
       var value = char;
       /* need to account for potential end-of-file :D */
-      if (current+1 < input.length) {
-        char = input[++current];
+      if (++current < input.length) {
+        char = input[current];
         /* also need to remember to take care of the last character in the buffer */
         while((LETTERS.test(char) || NUMBERS.test(char) || char === '_') && (current+1 <= input.length)) {
           value += char;
