@@ -346,17 +346,19 @@ function tokenizer(input) {
     /* while checking for LETTERS, we also check for NUMBERS and UNDERLINE
     (i.e. imagine the input as s0m3_c00l_n4m3) */
     if(LETTERS.test(char)) {
-      var value = '';
-
-      while(LETTERS.test(char) || NUMBERS.test(char) || char === '_') {
-        value += char;
+      var value = char;
+      /* need to account for potential end-of-file :D */
+      if (current+1 < input.length) {
         char = input[++current];
+        /* also need to remember to take care of the last character in the buffer */
+        while((LETTERS.test(char) || NUMBERS.test(char) || char === '_') && (current+1 <= input.length)) {
+          value += char;
+          char = input[++current];
+        }
       }
-      // There is a mysterious bug which adds a WHITESPACE to the end of some Words when
-      //I push them into an array (??!!?!?!).
       tokens.push({
         type: 'name',
-        value: value.replace(/\s/g,'')
+        value: value
       });
       continue;
     }
