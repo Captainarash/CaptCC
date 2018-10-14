@@ -55,19 +55,11 @@ function tokenizer(input) {
       continue;
     }
 
-    if (char === '[') {
-      tokens.push({
-        type: 'bracket',
-        value: '['
-      });
-      current++;
-      continue;
-    }
 
-    if (char === ']') {
+    if (char === '[' || char === ']') {
       tokens.push({
         type: 'bracket',
-        value: ']'
+        value: char
       });
       current++;
       continue;
@@ -92,11 +84,14 @@ function tokenizer(input) {
     }
 
     if (char === '/') {
+      // 1) one-line comments
       if (input[++current] === '/') {
         while (current < input.length && !NEWLINE.test(input[current])) {
           current++;
         }
-      } else if (input[current] === '*') {
+      }
+      // 2) multilne comments
+      else if (input[current] === '*') {
         current++;
         while (current < input.length) {
           if (input[current] === '*' && input[++current] === '/') {
@@ -105,6 +100,13 @@ function tokenizer(input) {
           }
           current++;
         }
+      }
+      // a single slash
+      else {
+        tokens.push({
+          type: 'slash',
+          value: '/'
+        });
       }
       continue;
     }
@@ -218,19 +220,10 @@ function tokenizer(input) {
       continue;
     }
 
-    if (char === '(') {
+    if (char === '(' || char === ')') {
       tokens.push({
         type: 'paren',
-        value: '('
-      });
-      current++;
-      continue;
-    }
-
-    if (char === ')') {
-      tokens.push({
-        type: 'paren',
-        value: ')'
+        value: char
       });
       current++;
       continue;
@@ -272,31 +265,16 @@ function tokenizer(input) {
       continue;
     }
 
-    if (char === '{') {
+    if (char === '{' || char === '}') {
       tokens.push({
         type: 'curly',
-        value: '{'
+        value: char
       });
       current++;
       continue;
     }
 
-    if (char === '}') {
-      tokens.push({
-        type: 'curly',
-        value: '}'
-      });
-      current++;
-      continue;
-    }
-
-    // We just ignore WHITESPACE ...
-    if(WHITESPACE.test(char)) {
-      current++;
-      continue;
-    }
-    // ... and the NEWLINE
-    if(NEWLINE.test(char)) {
+    if(WHITESPACE.test(char) || NEWLINE.test(char)) {
       current++;
       continue;
     }
