@@ -372,6 +372,14 @@ function parser(tokens) {
       };
     }
 
+    if (token.type === 'forwardslash') {
+      current++;
+      return {
+        type: 'ForwardSlash',
+        value: token.value
+      };
+    }
+
     // same as brackets and curly braces but for paranthesis, we call it 'CodeCave'
     if (
       token.type === 'paren' &&

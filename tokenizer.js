@@ -104,7 +104,7 @@ function tokenizer(input) {
       // a single slash
       else {
         tokens.push({
-          type: 'slash',
+          type: 'forwardslash',
           value: '/'
         });
       }
