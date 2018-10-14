@@ -45,6 +45,7 @@ function traverser(ast, visitor) {
       case 'Minus':
       case 'IncByNum':
       case 'DecByNum':
+      case 'ForwardSlash':
       case 'ComparisonE':
       case 'ComparisonN':
       case 'Macro':
@@ -287,6 +288,15 @@ function transformer(ast) {
       enter(node, parent) {
         parent._context.push({
           type: 'DecByNum',
+          value: node.value
+        });
+      },
+    },
+
+    ForwardSlash: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'ForwardSlash',
           value: node.value
         });
       },
