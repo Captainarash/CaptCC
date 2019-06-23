@@ -1,6 +1,8 @@
---there-will-be-huge-rebuild-improvment-update
+--there-will-be-huge-rebuild-improvment-update, if I have time :(
+contributions are accepted and appreciated.
+
 # CaptCC
-A tiny C compiler written purely in JavaScript.   
+A tiny Proof-of-Concept C compiler written purely in JavaScript.   
 It's been a while that I learned JS and it has worked for me in many different scenarios.      
 I actually learned JS while analyzing a piece of malware written in JS. Then I got really interested.      
 I was always curious if I can write a compiler; a tiny one. 
@@ -8,10 +10,9 @@ But there was a problem. I didn't know OCaml or Bison or Flex. I wondered why no
 
 
 Parts of this project is derived from James Kyle talk at EmberConf 2016 (https://www.youtube.com/watch?v=Tar4WgAfMr4).  
-I appreciate his effort to make this concept fairly easy to understand instead of writing a giant book   
-which no ones's gonna read.    
+I appreciate his effort to make this concept fairly easy to understand.    
 He made a Lisp Compiler converting Lisp syntax to JS.   
-I wanna convert C to ASM.   
+I want to convert C to ASM.   
 
 ###### The parts below are almost complete:
 
@@ -49,9 +50,9 @@ To be completed:
 
 ###### What's missing from the parser:
 
-typedef, define, ...
+typedef, define, ..., a lot!
 
-##### Usage in browser console:
+##### Usage in browser console (remember to replace the new-lines with the actual \n while copy pasting this):
 
     initGenerate(processor(transformer(parser(tokenizer("
     //some comment here :D
