@@ -5,8 +5,8 @@ contributions are accepted and appreciated.
 A tiny Proof-of-Concept C compiler written purely in JavaScript.   
 It's been a while that I learned JS and it has worked for me in many different scenarios.      
 I actually learned JS while analyzing a piece of malware written in JS. Then I got really interested.      
-I was always curious if I can write a compiler; a tiny one. 
-But there was a problem. I didn't know OCaml or Bison or Flex. I wondered why not just write it in JS?   
+I was always curious if I can write a compiler; a tiny one.  
+The funny part was writing it in JS :D
 
 
 Parts of this project is derived from James Kyle talk at EmberConf 2016 (https://www.youtube.com/watch?v=Tar4WgAfMr4).  
