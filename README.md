@@ -102,24 +102,24 @@ typedef, define, ..., a lot!
     )))))                   
 
 ##### Output:   
-  .text
-  .globl	_test_void
+  .text  
+  .globl	_test_void  
 
-  _test_void:
-  push %rbp
-  mov %rsp,%rbp
-  push $666
-  mov 0(%rsp),%rax
-  push %rax
-  incl (%rsp)
-  add $16,%rsp
-  pop %rbp
-  ret
-
-  .globl	_test_int_ret
-
-  _test_int_ret:
+  _test_void:  
   push %rbp  
+  mov %rsp,%rbp  
+  push $666  
+  mov 0(%rsp),%rax  
+  push %rax  
+  incl (%rsp)  
+  add $16,%rsp  
+  pop %rbp  
+  ret  
+
+  .globl	_test_int_ret  
+
+  _test_int_ret:  
+  push %rbp    
   mov %rsp,%rbp  
   push %rcx
   push %rdx
