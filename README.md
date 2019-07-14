@@ -59,11 +59,18 @@ typedef, define, ..., a lot!
     int glob = 10;
     int jack = 36;
 
-    int test(int a, int b){
+    void test_void(void){
+        int a = 777;
+        int b = a;
+        b++;
+        return;
+    }
+
+    int test_int_ret(int a, int b){
         a++;
         b++;
         char my_name[] = \"Arash\";
-        return 0;
+        return a;
     }
 
     int main(){
@@ -95,80 +102,83 @@ typedef, define, ..., a lot!
     )))))                   
 
 ##### Output:   
-    .text
-    .globl	_test
+  .text
+  .globl	_test_void
 
-    _test:
-      push %rbp
-      mov %rsp,%rbp
-      push %rcx
-      push %rdx
-      incl 8(%rsp)
-      incl (%rsp)
-      add $16,%rsp
-      pop %rbp
-      xor %rax,%rax
-      ret
+  _test_void:
+  push %rbp
+  mov %rsp,%rbp
+  push $666
+  mov 0(%rsp),%rax
+  push %rax
+  incl (%rsp)
+  add $16,%rsp
+  pop %rbp
+  ret
 
-    .globl	main
+  .globl	_test_int_ret
 
-    main:
-      push %rbp
-      mov %rsp,%rbp
-      push $1
-      push $8
-      incl 8(%rsp)
-      incl (%rsp)
-      xor %rax,%rax
-      sub $4,%rax
-      sub $3,%rax
-      add $5,%rax
-      sub $7,%rax
-      sub $8,%rax
-      add $2,%rax
-      sub $32,%rax
-      push %rax
-      mov 16(%rsp),%rax
-      push %rax
-      mov $1,%rcx
-      mov $2,%rdx
-      call _test
-      cmp $2,24(%rsp)
-      jne _ifv2_after
-      push $5
-      incl (%rsp)
-      add $8,%rsp
+  _test_int_ret:
+  push %rbp  
+  mov %rsp,%rbp  
+  push %rcx
+  push %rdx
+  incl 8(%rsp)
+  incl (%rsp)
+  mov 8(%rsp), %rax
+  add $16,%rsp
+  pop %rbp
+  ret
 
-    _ifv2_after:
-      cmp $35,8(%rsp)
-      jne _ifk35_after
-      xor %rax,%rax
-      add $55,%rax
-      add $34,%rax
-      push %rax
-      add $8,%rsp
+  .globl	main
 
-    _ifk35_after:
-      add $32,%rsp
-      pop %rbp
-      mov $1,%rax
-      ret
+  main:
+  push %rbp
+  mov %rsp,%rbp
+  push $1
+  push $8
+  incl 8(%rsp)
+  incl (%rsp)
+  xor %rax,%rax
+  sub $4,%rax
+  sub $3,%rax
+  add $5,%rax
+  sub $7,%rax
+  sub $8,%rax
+  add $2,%rax
+  sub $32,%rax
+  push %rax
+  mov 16(%rsp),%rax
+  push %rax
+  cmp $2,24(%rsp)
+  jne _ifv2_after
+  push $5  
+  incl (%rsp)  
+  add $8,%rsp  
 
-    .data
-    .globl	_glob
-    _glob:
-      .long	10
+   _ifv2_after:  
+    cmp $35,8(%rsp)  
+    jne _ifk35_after  
+    xor %rax,%rax  
+    add $55,%rax  
+    add $34,%rax   
+    push %rax  
+    add $8,%rsp  
 
-    .globl	_jack
-    _jack:
-      .long	36
+  _ifk35_after:
+    mov $1,%rax  
+    add $32,%rsp  
+    pop %rbp  
+    ret  
 
+  .data    
+    .globl	_glob  
+    _glob:  
+      .long	10  
 
-    L_test_my_name:
-      .ascii	"arash"
-
-    L_main_greet:
-      .ascii	"hello\n"
+  .globl	_jack  
+    _jack:  
+      .long	36  
 
 
 ##### To test the compiler code:

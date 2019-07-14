@@ -74,14 +74,15 @@ function generateFunctionAssembly(functionBody, functionArgs) {
     **  we add stack clearing code
     **/
     if (current !== 0 && current === (functionBody.length - 1)) {
-      functionAssembly += addClearStackAsm();
-      functionAssembly += restoreRBP();
+      clearStack();
+      restoreRBP();
     }
+    //clearStack();
     current++;
   }
   // for now we only support the functions that return 1 value.
   // hence, we clear the stack only in the end of a function;
-  clearStack();
+  //clearStack();
   return functionAssembly;
 }
 
@@ -107,10 +108,11 @@ function saveRBP() {
 }
 
 function restoreRBP() {
-  var epilogue = '\tpop %rbp\n';
-  stack.pop();
-  stack.pop();
-  return epilogue;
+    stack.pop();
+}
+
+function addRestoreRBPAsm() {
+   return '\tpop %rbp\n';
 }
 
 function findFunctionNames(functionPack) {
@@ -230,6 +232,8 @@ function generateReturn(returnValue) {
         }
       }
     }
+    retAsm += addClearStackAsm();
+    retAsm += addRestoreRBPAsm();
     retAsm += '\tret\n\n';
     return retAsm;
 }
@@ -313,9 +317,11 @@ function isAKeyword(word){
 
 function checkForStatements(part) {
   var functionAssembly = '';
+  var didaddEpilouge = 0;
   if (part[0].type === 'Word' && isAKeyword(part[0].value)) {
     if (part[0].value === 'return') {
       functionAssembly += generateReturn(part[1]);
+      didaddEpilouge = 1;
     }
 
     if (part[0].value === 'int') {
