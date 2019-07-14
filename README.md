@@ -121,38 +121,38 @@ typedef, define, ..., a lot!
   _test_int_ret:  
   push %rbp    
   mov %rsp,%rbp  
-  push %rcx
-  push %rdx
-  incl 8(%rsp)
-  incl (%rsp)
-  mov 8(%rsp), %rax
-  add $16,%rsp
-  pop %rbp
-  ret
-
+  push %rcx  
+  push %rdx  
+  incl 8(%rsp)  
+  incl (%rsp)  
+  mov 8(%rsp), %rax  
+  add $16,%rsp  
+  pop %rbp  
+  ret  
+  
   .globl	main
 
-  main:
-  push %rbp
-  mov %rsp,%rbp
-  push $1
-  push $8
-  incl 8(%rsp)
-  incl (%rsp)
-  xor %rax,%rax
-  sub $4,%rax
-  sub $3,%rax
-  add $5,%rax
-  sub $7,%rax
-  sub $8,%rax
-  add $2,%rax
-  sub $32,%rax
-  push %rax
-  mov 16(%rsp),%rax
-  push %rax
-  cmp $2,24(%rsp)
-  jne _ifv2_after
-  push $5  
+  main:  
+  push %rbp  
+  mov %rsp,%rbp  
+  push $1  
+  push $8  
+  incl 8(%rsp)  
+  incl (%rsp)  
+  xor %rax,%rax  
+  sub $4,%rax  
+  sub $3,%rax  
+  add $5,%rax  
+  sub $7,%rax  
+  sub $8,%rax  
+  add $2,%rax  
+  sub $32,%rax  
+  push %rax  
+  mov 16(%rsp),%rax  
+  push %rax  
+  cmp $2,24(%rsp)  
+  jne _ifv2_after  
+  push $5    
   incl (%rsp)  
   add $8,%rsp  
 
