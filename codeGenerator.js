@@ -52,7 +52,8 @@ function generateFunctionAssembly(functionBody, functionArgs) {
         stack.push({
           type: 'LocalVariable',
           name: functionArgs[i].name,
-          value: volatileRegs[regIndex]
+          value: volatileRegs[regIndex],
+          variableType: 'int'
         });
         regIndex++;
       }
@@ -60,10 +61,6 @@ function generateFunctionAssembly(functionBody, functionArgs) {
   }
   while (current < functionBody.length) {
     var part = functionBody[current];
-    if (current !== 0 && current === (functionBody.length - 1)) {
-      functionAssembly += clearStack();
-      functionAssembly += restoreRBP();
-    }
     if (part.type === 'Statement') {
         var partValue = part.value;
         functionAssembly += checkForStatements(partValue);
@@ -72,8 +69,19 @@ function generateFunctionAssembly(functionBody, functionArgs) {
     } else if (part.type === 'Call') {
       functionAssembly += generateCall(part);
     }
+
+    /** finally, if we are at the end of the block and there is absolutely nothing to parse
+    **  we add stack clearing code
+    **/
+    if (current !== 0 && current === (functionBody.length - 1)) {
+      functionAssembly += addClearStackAsm();
+      functionAssembly += restoreRBP();
+    }
     current++;
   }
+  // for now we only support the functions that return 1 value.
+  // hence, we clear the stack only in the end of a function;
+  clearStack();
   return functionAssembly;
 }
 
@@ -92,7 +100,9 @@ function initStack() {
 function saveRBP() {
   stack.push({
     type: 'SavedRBP',
-    value: 'rbp'
+    name: '',
+    value: 'rbp',
+    variableType: ''
   });
 }
 
@@ -181,6 +191,15 @@ function reverseOffset(offset) {
   return reverseOffset;
 }
 
+function findOnTheStack(value){
+  for (var i = 0; i < stack.length; i++) {
+    if(stack[i].name === value){
+      return i;
+    }
+  }
+  return -1;
+}
+
 function generateReturn(returnValue) {
   var retAsm = '';
     if (returnValue.type === 'NumberLiteral') {
@@ -189,24 +208,54 @@ function generateReturn(returnValue) {
         } else {
           retAsm += '\tmov $' + returnValue.value + ',%rax\n';
         }
-        retAsm += '\tret\n\n';
     }
+    else if (returnValue.type === 'Word') {
+      if (!isAKeyword(returnValue.value)) {
+        stackEntry = findOnTheStack(returnValue.value);
+        if (stackEntry !== -1) {
+          stackOffset = reverseOffset(stackEntry);
+          switch (stack[stackEntry].variableType) {
+            case 'int': {
+              if ( stackOffset !== 0) {
+                retAsm += '\tmov ' + stackOffset * 8 + '(%rsp), %rax\n';
+              }
+              else {
+                retAsm += '\tmov (%rsp), %rax\n';
+              }
+              break;
+            }
+            default:
+              break;
+          }
+        }
+      }
+    }
+    retAsm += '\tret\n\n';
     return retAsm;
 }
 
-function clearStack() {
+function addClearStackAsm() {
   var counter = 0;
   for (var i = 0; i < stack.length; i++) {
     if (stack[i].type === 'LocalVariable') {
       counter++;
     }
   }
-  var stackClearanceAsm = '\tadd $' + (counter * 8).toString() + ',%rsp\n';
-  while (counter !== 0) {
-    stack.pop();
-    counter--;
+  return '\tadd $' + (counter * 8).toString() + ',%rsp\n';
+}
+
+function clearStack() {
+  var entries = [];
+  for (var i = 0; i < stack.length; i++) {
+    if (stack[i].type === 'LocalVariable') {
+      entries.push(i);
+    }
   }
-  return stackClearanceAsm;
+  while (entries.length !== 0) {
+    stack.splice(entries[entries.length - 1], 1);
+    entries.pop();
+  }
+  return;
 }
 
 function generateIncByOne(offset){
@@ -255,9 +304,16 @@ function generateIfInside(ifInside, ifName, ifCmpValue) {
   return assembledifInside;
 }
 
+function isAKeyword(word){
+  if (keywords.indexOf(word) !== -1) {
+    return true;
+  }
+  return false;
+}
+
 function checkForStatements(part) {
   var functionAssembly = '';
-  if (part[0].type === 'Word' && keywords.indexOf(part[0].value) !== -1) {
+  if (part[0].type === 'Word' && isAKeyword(part[0].value)) {
     if (part[0].value === 'return') {
       functionAssembly += generateReturn(part[1]);
     }
@@ -275,7 +331,7 @@ function checkForStatements(part) {
         generateStringVariable(part);
       }
     }
-  } else if (part[0].type === 'Word' && keywords.indexOf(part[0].value) === -1) {
+  } else if (part[0].type === 'Word' && !isAKeyword(part[0].value)) {
       for (var i = 0; i < stack.length; i++) {
         if (stack[i].type === 'LocalVariable') {
           if (stack[i].name === part[0].value) {
@@ -365,7 +421,8 @@ function generateVariableAssignment(varType, varName, varValue) {
       stack.push({
         type: 'LocalVariable',
         name: varName,
-        value: varValue.value
+        value: varValue.value,
+        variableType: varType
       });
     }
   } else if (varValue.type === 'Word') {
@@ -382,7 +439,8 @@ function generateVariableAssignment(varType, varName, varValue) {
             stack.push({
               type: 'LocalVariable',
               name: varName,
-              value: stack[i].value
+              value: stack[i].value,
+              variableType: varType
             });
           }
         }
@@ -437,7 +495,8 @@ function generateVariableAssignmentWithAddition(statement) {
     stack.push({
       type: 'LocalVariable',
       name: statement[1].value,
-      value: sum
+      value: sum,
+      variableType: "int"
     });
     return statementAssembly;
   }
